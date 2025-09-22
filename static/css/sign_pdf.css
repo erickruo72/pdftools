@@ -1,0 +1,486 @@
+/* Scoped variables and base styles */
+#pdf-viewer-container {
+    --bg: #0f1115;
+    --panel: #171a21;
+    --muted: #98a2b3;
+    --accent: #4f46e5;
+    --border: #242733;
+    --text: #e6e6e6;
+    --success: #22c55e;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans";
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    padding-top: 80px;
+}
+
+/* All child elements are now scoped to the container */
+#pdf-viewer-container * {
+    box-sizing: border-box;
+}
+
+/* Tool header (desktop) */
+#pdf-viewer-container .tool-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 1rem 1.5rem;
+    background-color: var(--panel);
+    border-bottom: 1px solid var(--border);
+    gap: 1rem;
+}
+
+/* Scrollbar hidden */
+#pdf-viewer-container .viewer::-webkit-scrollbar,
+#pdf-viewer-container .tool-header::-webkit-scrollbar,
+#pdf-viewer-container body::-webkit-scrollbar {
+    display: none;
+}
+#pdf-viewer-container .viewer {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    flex-grow: 1;
+    padding: 24px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+#pdf-viewer-container .pages {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    align-items: center;
+}
+
+/* ✅ Cleaned PDF container */
+#pdf-viewer-container #pagesContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#pdf-viewer-container .page-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    margin: 1rem auto;
+}
+
+#pdf-viewer-container .pdf-canvas {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    height: auto;
+}
+
+/* Overlay for signature placement */
+#pdf-viewer-container .overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: auto;
+}
+
+/* Signature preview */
+#pdf-viewer-container .sig-preview {
+    position: absolute;
+    line-height: 1;
+    user-select: none;
+    cursor: move;
+    mix-blend-mode: multiply;
+    display: inline-block;
+}
+
+#pdf-viewer-container .sig-preview.selected {
+    outline: 2px solid rgba(59, 130, 246, 0.9);
+    border-radius: 4px;
+}
+
+/* Delete button */
+#pdf-viewer-container .sig-delete-btn {
+    position: absolute;
+    top: -12px;
+    right: -12px;
+    font-size: 22px;
+    color: #ff5722;
+    cursor: pointer;
+    background-color: var(--panel);
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    z-index: 10;
+}
+#pdf-viewer-container .sig-delete-btn:hover {
+    color: #ff2d00;
+}
+
+/* Form controls */
+#pdf-viewer-container .controls-group .label, #pdf-viewer-container .label {
+    font-size: 13px;
+    color: var(--muted);
+}
+
+#pdf-viewer-container input[type="text"],
+#pdf-viewer-container input[type="number"],
+#pdf-viewer-container select {
+    padding: 8px 10px;
+    background: #0c0e13;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+#pdf-viewer-container input[type="number"] {
+    max-width: 80px; 
+    text-align: center;
+}
+
+#pdf-viewer-container .select-container {
+    position: relative;
+    display: inline-block;
+}
+
+/* Buttons */
+#pdf-viewer-container button {
+    padding: 10px 12px;
+    border: none;
+    border-radius: 10px;
+    background: #23283a;
+    color: var(--text);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+#pdf-viewer-container button:hover { background-color: #343a4e; }
+#pdf-viewer-container button.primary { background: #4f46e5; }
+#pdf-viewer-container button.primary:hover { background: #6a64f1; }
+#pdf-viewer-container button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+#pdf-viewer-container #btnFinalize {
+    background: #4f46e5;
+    color: white;
+}
+#pdf-viewer-container #btnFinalize:hover {
+    background: #6a64f1;
+}
+#pdf-viewer-container #downloadArea button {
+    background: var(--success);
+    color: #fff;
+    font-weight: bold;
+}
+#pdf-viewer-container #downloadArea button:hover {
+    background: #16a34a;
+}
+
+#pdf-viewer-container .muted { color: var(--muted); font-size: 12px; }
+
+/* Upload section */
+#pdf-viewer-container .file-upload-main {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+}
+
+#pdf-viewer-container .drop-zone-container {
+    background-color: var(--panel);
+    border: 2px dashed var(--border);
+    border-radius: 16px;
+    padding: 4rem 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+    width: 100%;
+    max-width: 600px;
+}
+#pdf-viewer-container .drop-zone-container:hover,
+#pdf-viewer-container .drop-zone-container.highlight {
+    border-color: var(--accent);
+    background-color: #1e222b;
+}
+
+#pdf-viewer-container .drop-zone-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+#pdf-viewer-container .upload-icon {
+    font-size: 3rem;
+    color: var(--accent);
+}
+#pdf-viewer-container .upload-text {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+}
+#pdf-viewer-container .custom-file-upload {
+    background: var(--accent);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+    display: inline-block;
+}
+#pdf-viewer-container .custom-file-upload:hover {
+    background: #6a64f1;
+}
+#pdf-viewer-container .custom-file-upload input[type="file"] {
+    display: none;
+}
+
+/* Floating Action Button (FAB) & mobile sidebar */
+#pdf-viewer-container .fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: var(--accent);
+    color: white;
+    font-size: 24px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    display: flex; /* FAB is now visible by default */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+#pdf-viewer-container .mobile-sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 80%;
+    max-width: 300px;
+    height: 100vh;
+    background-color: var(--panel);
+    box-shadow: -4px 0 10px rgba(0,0,0,0.3);
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+    z-index: 1001;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+#pdf-viewer-container .mobile-sidebar.open {
+    transform: translateX(0);
+}
+#pdf-viewer-container .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+    z-index: 1000;
+}
+#pdf-viewer-container .sidebar-overlay.open {
+    opacity: 1;
+    visibility: visible;
+}
+#pdf-viewer-container .sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+#pdf-viewer-container .close-sidebar-btn {
+    background: none;
+    color: var(--text);
+    font-size: 1.5rem;
+}
+
+/* Spinner */
+#pdf-viewer-container .spinner-container {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+#pdf-viewer-container .spinner {
+    animation: spin 1s linear infinite;
+}
+
+.sig-preview[contenteditable="true"] {
+  border: 1px solid #007bff;   /* subtle outline while editing */
+  padding: 2px 4px;
+  min-width: 40px;
+  cursor: text;
+}
+
+.sig-preview {
+  cursor: pointer;
+  white-space: pre;   /* keeps spacing as typed */
+}
+
+
+
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #pdf-viewer-container .tool-header { display: none; }
+    /* FAB is now visible by default, so no need to change its display here. */
+      .steps {
+    grid-template-columns: 1fr;}
+}
+
+.seo-section {
+  margin-top: 3rem;
+  padding: 2.5rem 1rem;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  line-height: 1.6;
+}
+
+.seo-section .container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.seo-section h2 {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #222;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 2 columns on large screens */
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background: #fff;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  transition: transform 0.2s;
+}
+
+.step:hover {
+  transform: translateY(-2px);
+}
+
+.step-number {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #007bff;
+  flex-shrink: 0;
+}
+
+.step-content h4 {
+  margin: 0 0 0.5rem 0;
+  color: #007bff;
+}
+
+.step-content p {
+  margin: 0;
+  color: #555;
+}
+
+.faq{
+  color: #0c0e13;
+}
+
+.faq details {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border-left: 4px solid #007bff;
+  background: #f5f5f5;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.faq details[open] {
+  background: #e6f0ff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.faq summary {
+  font-weight: 600;
+  outline: none;
+  color: #222;
+}
+
+.faq p {
+  margin-top: 0.5rem;
+  color: #555;
+}
+
+.more-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+  justify-content: center;
+}
+
+.tool-link {
+  display: inline-block;
+  padding: 0.6rem 1.2rem;
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.tool-link:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+/* ---------------- Mobile Friendly Adjustments ---------------- */
+@media (max-width: 768px) {
+  .steps {
+    grid-template-columns: 1fr; /* stack steps vertically */
+  }
+
+  .step {
+    flex-direction: row; /* keep number and content side by side */
+  }
+}
+
+@media (max-width: 480px) {
+  .step {
+    flex-direction: column; /* stack number above content on very small screens */
+    align-items: flex-start;
+  }
+
+  .step-number {
+    margin-bottom: 0.5rem;
+  }
+}

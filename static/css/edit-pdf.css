@@ -1,0 +1,229 @@
+:root {
+  --slate-100: #f1f5f9;
+  --slate-200: #e2e8f0;
+  --slate-300: #cbd5e1;
+  --slate-700: #334155;
+  --gray-700: #374151;
+  --gray-500: #6b7280;
+  --gray-100: #f3f4f6;
+  --white: #ffffff;
+--green-600: #16a34a;
+  --green-700: #15803d;
+  --blue-600: #2563eb;
+  --blue-700: #1d4ed8;
+  --emerald-600: #059669;
+  --emerald-700: #047857;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--slate-100);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.toolbar {
+  position: fixed;
+  top:70px;
+  z-index: 50;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.5rem;
+  background-color: var(--white);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+.toolbar-item,
+.toolbar-btn,
+.toolbar-select,
+.toolbar-input {
+  font-size: 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--slate-300);
+  padding: 0.25rem 0.5rem;
+  background-color: var(--slate-200);
+  color: var(--slate-700);
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+
+.toolbar-item:hover,
+.toolbar-btn:hover,
+.toolbar-select:hover {
+  background-color: var(--slate-300);
+}
+
+.toolbar-btn.green {
+  background-color: var(--green-600);
+  color: var(--white);
+  font-weight: 600;
+  border: none;
+  padding: 0.375rem 0.75rem;
+}
+
+.toolbar-btn.green:hover {
+  background-color: var(--green-700);
+}
+
+.toolbar-btn.blue {
+  background-color: var(--blue-600);
+  color: var(--white);
+  font-weight: 600;
+  border: none;
+  padding: 0.375rem 0.75rem;
+}
+
+.toolbar-btn.blue:hover {
+  background-color: var(--blue-700);
+}
+
+.toolbar-btn.emerald {
+  background-color: var(--emerald-600);
+  color: var(--white);
+  font-weight: 700;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  border: none;
+  padding: 0.375rem 0.75rem;
+}
+
+.toolbar-btn.emerald:hover {
+  background-color: var(--emerald-700);
+}
+
+.toolbar-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--gray-700);
+}
+
+.flex {
+  display: flex;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.gap-1 {
+  gap: 0.25rem;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.w-12 {
+  width: 3rem;
+}
+
+.hidden {
+  display: none;
+}
+
+.text-xs {
+  font-size: 0.75rem;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.text-gray-500 {
+  color: var(--gray-500);
+}
+
+.text-center {
+  text-align: center;
+}
+
+.file-input-label {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background-color: var(--slate-200);
+  color: var(--slate-700);
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--slate-300);
+  transition: background-color 0.2s;
+}
+
+.file-input-label:hover {
+  background-color: var(--slate-300);
+}
+
+.color-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.color-label input[type="radio"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  margin-right: 0.25rem;
+  transition: all 0.2s;
+}
+
+.color-label input[type="radio"]:checked {
+  border-color: #333;
+  outline: 2px solid #fff;
+  box-shadow: 0 0 0 2px var(--color-value);
+}
+
+.color-label input[type="radio"][value="black"] { background-color: black; --color-value: black; }
+.color-label input[type="radio"][value="red"] { background-color: red; --color-value: red; }
+.color-label input[type="radio"][value="green"] { background-color: green; --color-value: green; }
+.color-label input[type="radio"][value="blue"] { background-color: blue; --color-value: blue; }
+.color-label input[type="radio"]:checked {
+  outline-offset: 2px;
+}
+
+/* Responsive canvas */
+canvas {
+  max-width: 100%;
+  height: auto !important;
+}
+
+.pages-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  padding-top: 5rem;
+}
+
+/* Responsive toolbar */
+@media (max-width: 1024px) {
+  .toolbar {
+      justify-content: flex-start;
+      gap: 0.5rem;
+  }
+  .toolbar > div, .toolbar a, .toolbar select, .toolbar button, .toolbar input {
+      flex: 1 1 auto;
+  }
+}
+@media (max-width: 640px) {
+  .toolbar {
+      flex-direction: column;
+      align-items: stretch;
+  }
+  .toolbar > div, .toolbar a, .toolbar select, .toolbar button, .toolbar input {
+      width: 100%;
+      text-align: center;
+  }
+}

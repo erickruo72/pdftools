@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<link rel="icon" href="{{ url_for('static', filename='css/favicon.ico') }}" type="image/x-icon">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/base_style1.css') }}">
+
+{% block head %}{% endblock %}
+</head>
+
+<body>
+  <header class="tpdf-header">
+    <nav class="tpdf-navbar">
+      <a class="tpdf-logo" href="/">
+        <i class="bi bi-cursor"></i> TapToPDF
+      </a>
+      <ul class="tpdf-nav-links" id="tpdf-navLinks">
+        <li><a href="/merge-pdf"><i class="bi bi-files"></i> Merge PDF</a></li>
+        <li><a href="/split-pdf"><i class="bi bi-scissors"></i> Split PDF</a></li>
+        <li><a href="/remove-pages"><i class="bi bi-eraser"></i> Remove Pages</a></li>
+        <li class="tpdf-tools-dropdown">
+          <a href="#" id="tpdf-desktop-dropdown-toggle"><i class="bi bi-tools"></i> All Tools <i class="bi bi-chevron-down"></i></a>
+          <div class="tpdf-dropdown-menu">
+            <div class="tpdf-dropdown-section">
+              <h4>ORGANIZE PDF</h4>
+              <a href="/merge-pdf"><i class="bi bi-files"></i> Merge PDF</a>
+              <a href="/split-pdf"><i class="bi bi-scissors"></i> Split PDF</a>
+              <a href="/remove-pages"><i class="bi bi-x-lg"></i> Remove pages</a>
+              <a href="/extract-pages"><i class="bi bi-box-arrow-down"></i> Extract pages</a>
+              <a href="/organize-pdf"><i class="bi bi-layout-text-window-reverse"></i> Organize PDF</a>
+            </div>
+            <div class="tpdf-dropdown-section">
+              <h4>OPTIMIZE PDF</h4>
+              <a href="/compress-pdf"><i class="bi bi-arrow-down-circle"></i> Compress PDF</a>
+              <a href="/ocr-pdf"><i class="bi bi-eye"></i> OCR PDF</a>
+            </div>
+            <div class="tpdf-dropdown-section">
+              <h4>CONVERT TO PDF</h4>
+              <a href="/jpg-to-pdf"><i class="bi bi-file-image"></i> JPG to PDF</a>
+              <a href="/word-to-pdf"><i class="bi bi-file-word"></i> WORD to PDF</a>
+              <a href="/ppt-to-pdf"><i class="bi bi-file-earmark-slides"></i> POWERPOINT to PDF</a>
+              <a href="/excel-to-pdf"><i class="bi bi-file-excel"></i> EXCEL to PDF</a>
+              <a href="/html-to-pdf"><i class="bi bi-code-slash"></i> HTML to PDF</a>
+            </div>
+            <div class="tpdf-dropdown-section">
+              <h4>CONVERT FROM PDF</h4>
+              <a href="/pdf-to-jpg"><i class="bi bi-file-image"></i> PDF to JPG</a>
+              <a href="/pdf-to-word"><i class="bi bi-file-word"></i> PDF to WORD</a>
+              <a href="/pdf-to-ppt"><i class="bi bi-file-earmark-slides"></i> PDF to POWERPOINT</a>
+              <a href="/pdf-to-excel"><i class="bi bi-file-excel"></i> PDF to EXCEL</a>
+              <a href="/pdf-to-pdfa"><i class="bi bi-file-earmark-text"></i> PDF to PDF/A</a>
+            </div>
+            <div class="tpdf-dropdown-section">
+              <h4>EDIT PDF</h4>
+              <a href="/rotate-pdf"><i class="bi bi-arrow-clockwise"></i> Rotate PDF</a>
+              <a href="/add-pdf-page-numbers"><i class="bi bi-123"></i> Add page numbers</a>
+              <a href="/add-watermark"><i class="bi bi-droplet"></i> Add watermark</a>
+              <a href="/edit-pdf"><i class="bi bi-pencil"></i> Edit PDF</a>
+            </div>
+            <div class="tpdf-dropdown-section">
+              <h4>PDF SECURITY</h4>
+              <a href="/unlock-pdf"><i class="bi bi-unlock"></i> Unlock PDF</a>
+              <a href="/protect-pdf"><i class="bi bi-shield-lock"></i> Protect PDF</a>
+              <a href="/sign-pdf"><i class="bi bi-pen"></i> Sign PDF</a>
+              <a href="/redact-pdf"><i class="bi bi-eye-slash"></i> Redact PDF</a>
+            </div>
+          </div>
+        </li>
+      </ul>
+
+<button class="tpdf-hamburger" id="tpdf-hamburger-btn" aria-label="Toggle menu">
+    <div class="tpdf-hamburger-icon">
+        <span class="tpdf-line"></span>
+        <span class="tpdf-line"></span>
+        <span class="tpdf-line"></span>
+    </div>
+</button>
+    </nav>
+  </header>
+
+
+  <div class="tpdf-mobile-menu" id="tpdf-mobile-menu">
+    <button class="tpdf-close-btn" id="tpdf-close-btn" aria-label="Close menu">
+      <i class="bi bi-x-lg"></i>
+    </button>
+    <ul class="tpdf-mobile-nav-links">
+      <li><a href="/merge-pdf"><i class="bi bi-files"></i> Merge PDF</a></li>
+      <li><a href="/split-pdf"><i class="bi bi-scissors"></i> Split PDF</a></li>
+      <li><a href="/remove-pages"><i class="bi bi-eraser"></i> Remove Pages</a></li>
+      <li class="tpdf-mobile-dropdown-toggle">
+        <a href="#" id="tpdf-mobile-dropdown-toggle"><i class="bi bi-tools"></i> All Tools <i class="bi bi-chevron-down"></i></a>
+        <div class="tpdf-mobile-dropdown-content" id="tpdf-mobile-dropdown-content">
+          <div class="tpdf-dropdown-section">
+            <h4>ORGANIZE PDF</h4>
+            <a href="/merge-pdf"><i class="bi bi-files"></i> Merge PDF</a>
+            <a href="/split-pdf"><i class="bi bi-scissors"></i> Split PDF</a>
+            <a href="/remove-pages"><i class="bi bi-x-lg"></i> Remove pages</a>
+            <a href="/extract-pages"><i class="bi bi-box-arrow-down"></i> Extract pages</a>
+            <a href="/organize-pdf"><i class="bi bi-layout-text-window-reverse"></i> Organize PDF</a>
+            <a href="/scan-to-pdf"><i class="bi bi-camera"></i> Scan to PDF</a>
+          </div>
+          <div class="tpdf-dropdown-section">
+            <h4>OPTIMIZE PDF</h4>
+            <a href="/compress-pdf"><i class="bi bi-arrow-down-circle"></i> Compress PDF</a>
+            <a href="/ocr-pdf"><i class="bi bi-eye"></i> OCR PDF</a>
+          </div>
+          <div class="tpdf-dropdown-section">
+            <h4>CONVERT TO PDF</h4>
+            <a href="/jpg-to-pdf"><i class="bi bi-file-image"></i> JPG to PDF</a>
+            <a href="/word-to-pdf"><i class="bi bi-file-word"></i> WORD to PDF</a>
+            <a href="/ppt-to-pdf"><i class="bi bi-file-earmark-slides"></i> POWERPOINT to PDF</a>
+            <a href="/excel-to-pdf"><i class="bi bi-file-excel"></i> EXCEL to PDF</a>
+            <a href="/html-to-pdf"><i class="bi bi-code-slash"></i> HTML to PDF</a>
+          </div>
+          <div class="tpdf-dropdown-section">
+            <h4>CONVERT FROM PDF</h4>
+            <a href="/pdf-to-jpg"><i class="bi bi-file-image"></i> PDF to JPG</a>
+            <a href="/pdf-to-word"><i class="bi bi-file-word"></i> PDF to WORD</a>
+            <a href="/pdf-to-ppt"><i class="bi bi-file-earmark-slides"></i> PDF to POWERPOINT</a>
+            <a href="/pdf-to-excel"><i class="bi bi-file-excel"></i> PDF to EXCEL</a>
+            <a href="/pdf-to-pdfa"><i class="bi bi-file-earmark-text"></i> PDF to PDF/A</a>
+          </div>
+          <div class="tpdf-dropdown-section">
+            <h4>EDIT PDF</h4>
+            <a href="/rotate-pdf"><i class="bi bi-arrow-clockwise"></i> Rotate PDF</a>
+            <a href="/add-pdf-page-numbers"><i class="bi bi-123"></i> Add page numbers</a>
+            <a href="/add-watermark"><i class="bi bi-droplet"></i> Add watermark</a>
+            <a href="/edit-pdf"><i class="bi bi-pencil"></i> Edit PDF</a>
+          </div>
+          <div class="tpdf-dropdown-section">
+            <h4>PDF SECURITY</h4>
+            <a href="/unlock-pdf"><i class="bi bi-unlock"></i> Unlock PDF</a>
+            <a href="/protect-pdf"><i class="bi bi-shield-lock"></i> Protect PDF</a>
+            <a href="/sign-pdf"><i class="bi bi-pen"></i> Sign PDF</a>
+            <a href="/redact-pdf"><i class="bi bi-eye-slash"></i> Redact PDF</a>
+            <a href="/compare-pdf"><i class="bi bi-file-diff"></i> Compare PDF</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+
+  <main style="min-height: 100vh;">
+    {% block content %}{% endblock %}
+  </main>
+
+
+  <footer class="tpdf-footer">
+    <p>
+      &copy; 2025 TapToPDF. Made to make your life easier |
+      <a href="/Privacy-policy">Privacy Policy</a> |
+      <a href="/contact-us">Contact Us</a> |
+      <a href="/about-us">About Us</a> |
+      <a href="/terms-of-service">Terms of Service</a>
+    </p>
+  </footer>
+
+
+  <script>
+    const hamburger = document.getElementById('tpdf-hamburger-btn');
+    const mobileMenu = document.getElementById('tpdf-mobile-menu');
+    const closeBtn = document.getElementById('tpdf-close-btn');
+    const mobileDropdownToggle = document.getElementById('tpdf-mobile-dropdown-toggle');
+    const dropdownContent = document.getElementById('tpdf-mobile-dropdown-content');
+
+    hamburger.addEventListener('click', () => {
+      mobileMenu.classList.toggle('active');
+    });
+
+
+    closeBtn.addEventListener('click', () => {
+      mobileMenu.classList.remove('active');
+    });
+
+
+    mobileDropdownToggle.addEventListener('click', (e) => {
+      e.preventDefault();
+      dropdownContent.classList.toggle('active');
+    });
+
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 992) {
+        mobileMenu.classList.remove('active');
+      }
+    });
+
+
+    // Get all menu links
+const menuLinks = document.querySelectorAll('.tpdf-nav-links > li > a');
+
+// Loop through each link and add active class to the current one based on URL
+menuLinks.forEach(link => {
+  if (window.location.pathname === link.getAttribute('href')) {
+    link.classList.add('active'); // Add active class to the current link
+  } else {
+    link.classList.remove('active'); // Remove active class from other links
+  }
+});
+
+  </script>
+  {% block scripts %}{% endblock %}
+
+
+</body>
+</html>
+
+

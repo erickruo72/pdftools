@@ -1,0 +1,234 @@
+/*
+ * This CSS provides a clean, modern, and user-friendly style for a PowerPoint to PDF conversion page.
+ * All styles are scoped to the `.pptpdf-body` class to prevent affecting the rest of the site.
+ */
+
+/* --- Tool Body Styles --- */
+.pptpdf-body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: #f3f4f6;
+  color: #1f2937;
+  margin: 0;
+  padding: 2rem;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* --- Main Container & Layout --- */
+.pptpdf-body .merge-container {
+
+  width: 100%;
+  max-width: 900px;
+  padding: 2.5rem 3rem;
+  text-align: center;
+}
+
+/* --- Header Section --- */
+.pptpdf-body .tool-header h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #5b21b6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.pptpdf-body .tool-header h1 i {
+  color: #5b21b6;
+  font-size: 2.5rem;
+}
+
+.pptpdf-body .tool-header p {
+  font-size: 1.125rem;
+  color: #6b7280;
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+/* --- Upload Section --- */
+.pptpdf-body .upload-section {
+  border: 3px dashed #e5e7eb;
+  border-radius: 1rem;
+  padding: 3rem 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.pptpdf-body .upload-section:hover,
+.pptpdf-body .upload-section.highlight {
+  border-color: #5b21b6;
+  background-color: #c4b5fd;
+}
+
+.pptpdf-body .drop-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.pptpdf-body .drop-content .bi-folder-plus {
+  font-size: 4rem;
+  color: #5b21b6;
+  margin-bottom: 0.5rem;
+}
+
+.pptpdf-body .drop-content p {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #4c1d95;
+  margin: 0;
+}
+
+.pptpdf-body .drop-content span {
+  font-size: 1rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* --- File Status Area --- */
+.pptpdf-body .file-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  background-color: #f3f4f6;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border: 1px solid #e5e7eb;
+  width: 100%;
+}
+
+.pptpdf-body .file-details {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.pptpdf-body .file-details .folder-icon {
+  font-size: 1.5rem;
+  color: #5b21b6;
+}
+
+.pptpdf-body .file-details span {
+  font-size: 1rem;
+}
+
+.pptpdf-body .status-message-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  font-size: 1rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+}
+
+.pptpdf-body .status-message-container .status-text {
+  color: #4c1d95;
+}
+
+.pptpdf-body .status-message-container .spinner {
+  border: 4px solid #e5e7eb;
+  border-top: 4px solid #5b21b6;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.pptpdf-body .status-message-container .success-icon {
+  color: #10b981;
+  font-size: 1.5rem;
+}
+
+.pptpdf-body .status-message.error {
+  color: #ef4444;
+  font-weight: 600;
+  margin-top: 1rem;
+}
+
+/* --- Action Buttons --- */
+.pptpdf-body .action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.pptpdf-body .btn {
+  padding: 1rem 2rem;
+  border-radius: 9999px;
+  font-size: 1.125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  justify-content: center;
+  border: none;
+}
+
+.pptpdf-body .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.05);
+}
+
+.pptpdf-body .btn-convert {
+  background-color: #5b21b6;
+  color: #ffffff;
+}
+
+.pptpdf-body .btn-convert:disabled {
+  background-color: #e5e7eb;
+  cursor: not-allowed;
+  color: #6b7280;
+}
+
+.pptpdf-body .btn-download {
+  background-color: #10b981;
+  color: #ffffff;
+}
+
+.pptpdf-body .btn-download i,
+.pptpdf-body .btn-convert i {
+  margin-left: 0.5rem;
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 768px) {
+  .pptpdf-body .merge-container {
+    padding: 2rem 1.5rem;
+  }
+  
+  .pptpdf-body .tool-header h1 {
+    font-size: 1.75rem;
+  }
+  
+  .pptpdf-body .tool-header p {
+    font-size: 1rem;
+  }
+  
+  .pptpdf-body .btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
+}

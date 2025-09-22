@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block head %}
+<meta charset="UTF-8">
+<title>Contact Us - TapToPDF</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Get in touch with TapToPDF support for questions, feedback, or technical help. We're here to assist you.">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/contact_style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/base_style1.css') }}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TapToPDF">
+<meta property="og:title" content="Contact Us - TapToPDF">
+<meta property="og:description" content="Get in touch with TapToPDF support for questions, feedback, or technical help. We're here to assist you.">
+<meta property="og:image" content="/static/css/preview.png">
+<meta property="og:image:alt" content="Contact TapToPDF for Support and Feedback">
+<meta property="og:url" content="{{ request.url }}">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Contact Us - TapToPDF">
+<meta name="twitter:description" content="Get in touch with TapToPDF support for questions, feedback, or technical help. We're here to assist you.">
+<meta name="twitter:image" content="/static/css/preview.png">
+<meta name="twitter:image:alt" content="Contact TapToPDF for Support and Feedback">
+
+<meta itemprop="name" content="Contact Us - TapToPDF">
+<meta itemprop="description" content="Get in touch with TapToPDF support for questions, feedback, or technical help. We're here to assist you.">
+<meta itemprop="image" content="/static/css/preview.png">
+{% endblock %}
+
+{% block content %}
+<div class="contact-pattern-bg"></div>
+<main class="contact-page-container">
+  <div class="contact-block">
+    <div class="contact-block__container">
+      <div class="contact-block__body">
+        <div class="contact-row">
+          <!-- Column for the heading -->
+          <div class="contact-col-lg-5 contact-col-md-12">
+            <div class="contact-super">
+              <h1 class="contact-super__title">Contact</h1>
+              <h2 class="contact-super__content">
+                Contact us to report a problem, clarify any doubts about our tools, or just find out more.
+              </h2>
+            </div>
+          </div>
+
+          <!-- Column for the form -->
+          <div class="contact-col-lg-7 contact-col-md-12 contact-mt-md-5">
+            <div class="contact-card contact-card--input">
+              <div class="contact-card__body">
+                <form id="contact-form">
+                  <div class="contact-form__group">
+                    <label class="contact-control-label" for="name">Your Name</label>
+                    <input type="text" id="name" class="contact-input" name="name" placeholder="Your Name" required>
+                  </div>
+                  <div class="contact-form__group">
+                    <label class="contact-control-label" for="email">Your Email</label>
+                    <input type="email" id="email" class="contact-input" name="email" placeholder="Your Email" required>
+                  </div>
+                  <div class="contact-form__group">
+                    <label class="contact-control-label" for="subject">Subject</label>
+                    <div class="contact-input--icon contact-input--clip">
+                      <select id="subject" class="contact-input" name="subject" required>
+                        <option value="">Choose a subject...</option>
+                        <option value="General information">General information / Contact</option>
+                        <option value="Billing">Billing</option>
+                        <option value="Suggest a feature">Suggest a feature</option>
+                        <option value="Report a Problem">Report a Problem</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="contact-form__group">
+                    <label class="contact-control-label" for="message">Message</label>
+                    <textarea id="message" class="contact-input" name="message" rows="6" placeholder="Write a message" required></textarea>
+                  </div>
+
+                  <!-- Honeypot Field for Spam Protection -->
+                  <div style="position:absolute; left:-9999px;">
+                    <input type="text" id="honeypot" name="honeypot">
+                  </div>
+
+                  <div class="contact-card__actions">
+                    <button type="submit" class="contact-btn">Send message</button>
+                  </div>
+                </form>
+
+                <!-- Status output -->
+                <div id="contact-status" class="contact-alert" style="margin-top:1rem; display:none;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  const form = document.getElementById("contact-form");
+  const statusBox = document.getElementById("contact-status");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    statusBox.style.display = "block";
+    statusBox.textContent = "Submitting...";
+    statusBox.className = "contact-alert contact-alert-info";
+
+    // Collect form data
+    const formData = Object.fromEntries(new FormData(form).entries());
+
+    // Abort if honeypot is filled (bot)
+    if (formData.honeypot) {
+      statusBox.textContent = "Bot submission detected.";
+      statusBox.className = "contact-alert contact-alert-danger";
+      return;
+    }
+
+    try {
+      const res = await fetch("{{ url_for('main.contact_submit') }}", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || data.error) {
+        statusBox.textContent = data.error || "Something went wrong.";
+        statusBox.className = "contact-alert contact-alert-danger";
+        return;
+      }
+
+      const jobId = data.job_id;
+      statusBox.textContent = " Sending...";
+
+      // Poll job status
+      const interval = setInterval(async () => {
+        const resp = await fetch(`/api/job/status/${jobId}`);
+        const jobData = await resp.json();
+
+        if (jobData.status === "finished") {
+          clearInterval(interval);
+          statusBox.textContent = "✅ Your message was sent successfully!";
+          statusBox.className = "contact-alert contact-alert-success";
+          form.reset();
+        } else if (jobData.status === "failed") {
+          clearInterval(interval);
+          statusBox.textContent = "❌ Failed to send: " + jobData.result;
+          statusBox.className = "contact-alert contact-alert-danger";
+        }
+      }, 2000);
+    } catch (err) {
+      statusBox.textContent = "Network error: " + err.message;
+      statusBox.className = "contact-alert contact-alert-danger";
+    }
+  });
+</script>
+{% endblock %}

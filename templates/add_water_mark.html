@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Watermark Your PDF - TapToPDF{% endblock %}
+{% block head %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/watermark.css') }}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base_style1.css') }}">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+  </script>
+
+
+<meta name="description" content="Easily watermark your PDF files online for free. Add custom text or image watermarks to your documents to protect them or add a personal touch. Fast, simple, and no installation required.">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TapToPDF">
+<meta property="og:title" content="Watermark Your PDF - TapToPDF">
+<meta property="og:description" content="Easily watermark your PDF files online for free. Add custom text or image watermarks to your documents to protect them or add a personal touch. Fast, simple, and no installation required.">
+<meta property="og:image" content="/static/css/preview.png">
+<meta property="og:image:alt" content="Watermark Your PDF - TapToPDF">
+<meta property="og:url" content="{{ request.url }}">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Watermark Your PDF - TapToPDF">
+<meta name="twitter:description" content="Easily watermark your PDF files online for free. Add custom text or image watermarks to your documents to protect them or add a personal touch. Fast, simple, and no installation required.">
+<meta name="twitter:image" content="/static/css/preview.png">
+<meta name="twitter:image:alt" content="Watermark Your PDF - TapToPDF">
+
+<meta itemprop="name" content="Watermark Your PDF - TapToPDF">
+<meta itemprop="description" content="Easily watermark your PDF files online for free. Add custom text or image watermarks to your documents to protect them or add a personal touch. Fast, simple, and no installation required.">
+<meta itemprop="image" content="/static/css/preview.png">
+{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero-content">
+    <h1><i class="bi bi-droplet"></i>Watermark Your PDF</h1>
+    <p class="description">
+      Upload a PDF, preview it, add a custom watermark, and download your file.
+    </p>
+
+    <div id="upload-box" class="upload-box">
+                <i class="bi bi-folder-plus"></i>
+      <p>Drag & Drop your PDF here or Click to Upload</p>
+      <input type="file" id="pdf-upload" accept="application/pdf" hidden>
+    </div>
+
+
+<div id="loading" class="loading-container hidden">
+  <div class="spinner"></div>
+  <span class="loading-text">Uploading your file...</span>
+</div>
+
+
+    <div id="workspace" class="workspace hidden">
+      <div id="preview-frame" class="preview-frame">
+        <canvas id="pdf-canvas"></canvas>
+        <div id="watermark-box" class="watermark-box">
+          <div id="watermark" class="watermark-text">Sample Watermark</div>
+          <div class="resize-handle br"></div>
+        </div>
+      </div>
+
+      <div id="controls" class="controls">
+        <label>Watermark Text</label>
+        <input type="text" id="wm-text" value="Sample Watermark">
+
+        <label>Opacity</label>
+        <input type="range" id="wm-opacity" min="0" max="1" step="0.1" value="0.3">
+
+        <label>Rotation</label>
+        <input type="range" id="wm-rotation" min="0" max="360" step="1" value="45">
+
+        <label>Size</label>
+        <input type="range" id="wm-size" min="10" max="100" step="1" value="28">
+
+        <label>Apply To</label>
+        <select id="page-option">
+          <option value="all">All Pages</option>
+          <option value="exclude_first">Exclude First Page</option>
+          <option value="exclude_last">Exclude Last Page</option>
+          <option value="specific">Specific Pages</option>
+        </select>
+        <input type="text" id="specific-pages" placeholder="e.g. 2,4,5" class="hidden">
+
+        <button id="apply-btn" class="btn gray">
+          <span class="btn-text">Apply Watermark</span>
+          <span class="btn-spinner hidden">
+            <div class="loader"></div>
+            <span style="color: blue;">Applying watermark...</span>
+          </span>
+        </button>
+
+        <button id="download-btn" class="btn green hidden">
+          <span class="btn-text">Download PDF</span>
+          <span class="btn-spinner hidden">
+            <div class="loader"></div>
+            <span>Preparing download...</span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+<script src="{{ url_for('static', filename='js/watermark.js') }}"></script>
+{% endblock %}

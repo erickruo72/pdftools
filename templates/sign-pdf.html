@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign PDF - TapToPDF{% endblock %}
+
+{% block head %}
+  <meta charset="utf-8" />
+  <title>PDF Signer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/sign_pdf.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base_style1.css') }}">
+
+  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
+  </script>
+
+  <meta name="description" content="Sign PDF documents online for free. Create or upload your digital signature to sign your files with our secure and easy-to-use tool. No software needed.">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TapToPDF">
+<meta property="og:title" content="Sign PDF - TapToPDF">
+<meta property="og:description" content="Sign PDF documents online for free. Create or upload your digital signature to sign your files with our secure and easy-to-use tool. No software needed.">
+<meta property="og:image" content="/static/css/preview.png">
+<meta property="og:image:alt" content="Sign PDF Documents Online - TapToPDF">
+<meta property="og:url" content="{{ request.url }}">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Sign PDF - TapToPDF">
+<meta name="twitter:description" content="Sign PDF documents online for free. Create or upload your digital signature to sign your files with our secure and easy-to-use tool. No software needed.">
+<meta name="twitter:image" content="/static/css/preview.png">
+<meta name="twitter:image:alt" content="Sign PDF Documents Online - TapToPDF">
+
+<meta itemprop="name" content="Sign PDF - TapToPDF">
+<meta itemprop="description" content="Sign PDF documents online for free. Create or upload your digital signature to sign your files with our secure and easy-to-use tool. No software needed.">
+<meta itemprop="image" content="/static/css/preview.png">
+
+{% endblock %}
+
+{% block content %}
+<div id="pdf-viewer-container">
+    <main class="file-upload-main">
+      <div id="dropZone" class="drop-zone-container">
+        <div id="fileUploadContent" class="drop-zone-content">
+          <i class="fas fa-cloud-upload-alt upload-icon"></i>
+          <p class="upload-text">Drop your PDF file here</p>
+          <p class="muted">or</p>
+          <label class="custom-file-upload">
+            <input type="file" id="fileInput" accept="application/pdf" />
+            Upload File
+          </label>
+        </div>
+        <div id="fileUploadSpinner" class="drop-zone-content" style="display: none;">
+          <i class="fas fa-spinner spinner upload-icon"></i>
+          <p class="upload-text">Loading PDF...</p>
+        </div>
+      </div>
+    </main>
+
+    <main class="viewer" style="display: none;">
+      <div id="pagesContainer" class="pages"></div>
+    </main>
+
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+    <aside id="mobile-sidebar" class="mobile-sidebar">
+      <div class="sidebar-header">
+        <h3>Signature Settings</h3>
+        <button class="close-sidebar-btn"><i class="fas fa-times"></i></button>
+      </div>
+      
+      <div class="controls-group" style="flex-direction: column; align-items: stretch; gap: 0.75rem;">
+        <label>
+          <input type="checkbox" id="enableSigText" />
+          Add Signature
+        </label>
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+          <label class="label">Font</label>
+          <div class="select-container" style="flex-grow: 1;">
+            <select id="sigFont" style="width: 100%;">
+              <option value="DancingScript">DancingScript</option>
+              <option value="GreatVibes">GreatVibes</option>
+              <option value="Pacifico">Pacifico</option>
+              <option value="Satisfy">Satisfy</option>
+            </select>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+          <label class="label">Size</label>
+          <input type="number" id="sigSize" min="8" max="120" value="24" style="flex-grow: 1;" />
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+          <label class="label">Color</label>
+          <div class="select-container" style="flex-grow: 1;">
+            <select id="sigColor" style="width: 100%;">
+              <option value="black" selected>Black</option>
+              <option value="red">Red</option>
+              <option value="green">Green</option>
+              <option value="blue">Blue</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="btnFinalizeMobile" class="primary" style="margin-top: 1rem;">
+          <span class="button-text">Finalize & Sign</span>
+          <span class="spinner-container">
+            <i class="fas fa-spinner spinner"></i>
+            <span class="spinner-text">Preparing...</span>
+          </span>
+        </button>
+        <div id="jobStatusMobile" class="muted"></div>
+        <div id="downloadAreaMobile"></div>
+      </div>
+    </aside>
+
+    <button id="fab" class="fab"><i class="fas fa-pen"></i></button>
+
+<section id="seo-content" class="seo-section">
+  <div class="container">
+
+    <h2>PDF Signer: How to Use</h2>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <h4>Upload Your PDF</h4>
+          <p>Drag & drop your PDF file or click "Upload File" above to start.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <h4>Place Your Signature</h4>
+          <p>Click or tap where you want the signature. Customize the font, size, and color.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <h4>Adjust Position</h4>
+          <p>Drag the signature for precise placement. Double-tap (mobile) or double-click (desktop) to edit.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">4</div>
+        <div class="step-content">
+          <h4>Finalize & Download</h4>
+          <p>Click "Finalize & Sign" to generate your signed PDF and download instantly.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="color: black;">Frequently Asked Questions (FAQs)</h3>
+    <div class="faq">
+      <details>
+        <summary>Can I edit an existing signature?</summary>
+        <p>Yes! Tap on mobile or double-click on desktop to edit your signature text.</p>
+      </details>
+      <details>
+        <summary>Is this tool free?</summary>
+        <p>Yes, signing PDFs online with this tool is completely free.</p>
+      </details>
+      <details>
+        <summary>Does it work on mobile devices?</summary>
+        <p>Absolutely! Touch-friendly editing and dragging is fully supported.</p>
+      </details>
+    </div>
+
+    <h3 style="color: black;">Discover More PDF Tools</h3>
+    <div class="more-tools">
+      <a href="/extract-pages" class="tool-link">Extract Pages</a>
+      <a href="/merge-pdf" class="tool-link">Merge PDFs</a>
+      <a href="/compress-pdf" class="tool-link">Compress PDF</a>
+      <a href="/pdf-to-word" class="tool-link">PDF to Word</a>
+      <a href="/pdf-to-image" class="tool-link">PDF to Image</a>
+    </div>
+
+  </div>
+</section>
+
+
+</div>
+
+<script src="/static/js/sign.js"></script>
+<script>
+    // Script for mobile sidebar
+    document.addEventListener('DOMContentLoaded', () => {
+        const fab = document.getElementById('fab');
+        const mobileSidebar = document.getElementById('mobile-sidebar');
+        const closeBtn = mobileSidebar.querySelector('.close-sidebar-btn');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        function toggleSidebar() {
+            mobileSidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+        }
+
+        fab.addEventListener('click', toggleSidebar);
+        closeBtn.addEventListener('click', toggleSidebar);
+        overlay.addEventListener('click', toggleSidebar);
+    });
+</script>
+{% endblock %}

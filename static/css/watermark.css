@@ -1,0 +1,404 @@
+/* Import a modern, clean font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+    --secondary-color: #4b5563;
+    --background-light: #f9fafb;
+    --background-white: #ffffff;
+    --text-dark: #1f2937;
+    --text-gray: #4b5563;
+    --border-radius-lg: 1rem;
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--background-light);
+    color: var(--text-dark);
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+}
+
+/* Hero Section */
+.hero {
+    padding: 2rem 1rem;
+    text-align: center;
+}
+
+.hero-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.hero h1 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #5b21b6;
+}
+
+.hero .description {
+    font-size: 1rem;
+    color: var(--text-gray);
+    margin-bottom: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Upload Box */
+.upload-box {
+    border: 2px dashed #d1d5db;
+    border-radius: var(--border-radius-lg);
+    padding: 3rem 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: var(--background-white);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+}
+
+.upload-box:hover {
+    border-color: var(--primary-color);
+    background-color: #f3f4f6;
+}
+
+.upload-box p {
+    margin: 0;
+    font-weight: 500;
+    color: var(--text-gray);
+}
+
+.upload-box .upload-icon {
+    font-size: 8rem;
+    color: var(--primary-color);
+}
+
+.upload-box .bi-folder-plus{
+     font-size: 4rem;
+  color: #5b21b6;
+  margin-bottom: 0.5rem;
+}
+
+.upload-box  p{
+  font-size: 1.0rem;
+  font-weight: 400;
+  color: #4c1d95;
+  margin: 0;
+}
+
+/* Loading Spinner */
+#loading.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #ccc;
+    border-radius: 12px;
+    padding: 2.5rem 1rem;
+    max-width: 500px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+#loading .spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(0, 0, 0, 0.1);
+    border-top: 5px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+#loading .loading-text {
+    font-size: 1rem;
+    color: var(--text-dark);
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.hidden {
+    display: none;
+}
+
+/* Workspace Layout */
+.workspace {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+/* Preview Frame */
+.preview-frame {
+    position: relative;
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-2xl);
+    background-color: var(--background-white);
+    border: 1px solid #e5e7eb;
+}
+
+#pdf-canvas {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.watermark-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    cursor: move;
+}
+
+.watermark-text {
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.5);
+    user-select: none;
+    white-space: nowrap;
+}
+
+.resize-handle {
+    position: absolute;
+    width: 1rem;
+    height: 1rem;
+    background: var(--primary-color);
+    border-radius: 50%;
+    cursor: nwse-resize;
+}
+
+.resize-handle.br {
+    bottom: 0;
+    right: 0;
+    transform: translate(50%, 50%);
+}
+
+/* Controls Panel */
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background-color: var(--background-white);
+    padding: 2rem;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-lg);
+}
+
+.controls label {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.controls input[type="text"],
+.controls input[type="range"],
+.controls select {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid #d1d5db;
+    background-color: #f9fafb;
+    color: var(--text-dark);
+    transition: border-color 0.2s;
+}
+
+.controls input:focus,
+.controls select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+/* Buttons */
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.btn.gray {
+    background-color: var(--secondary-color);
+    color: var(--background-white);
+}
+
+.btn.gray:hover {
+    background-color: var(--text-dark);
+}
+
+.btn.green {
+    background-color: #10b981;
+    color: #ffffff;
+}
+
+.btn.green:hover {
+    background-color: #059669;
+}
+
+/* Unified Guide Section */
+.taptopdf-guide-section {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--background-light); /* Unified background */
+    padding: 4rem 1rem;
+    color: var(--text-dark);
+}
+
+.taptopdf-guide-section h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 2.5rem;
+    color: var(--text-dark); /* Unified text color */
+}
+
+.taptopdf-steps {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: stretch; /* All cards will stretch to the same height */
+    gap: 1rem;
+    margin-bottom: 3rem;
+}
+
+.taptopdf-step-card {
+    background-color: var(--background-white); /* Unified background */
+    border-radius: var(--border-radius-lg);
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    /* Added flex properties to the card itself */
+    flex: 1 1 200px; /* This allows cards to grow but maintain a base width */
+    max-width: 250px; /* Set a max-width to prevent them from becoming too wide */
+}
+
+.taptopdf-step-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.step-number {
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primary-color); /* Unified color */
+    color: #ffffff;
+    font-weight: 700;
+    border-radius: 9999px;
+    margin: 0 auto 1rem;
+    font-size: 1.25rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.taptopdf-step-card p {
+    color: var(--text-gray); /* Unified text color */
+    font-size: 1.125rem;
+    line-height: 1.5;
+}
+
+.tool-explore {
+    background-color: var(--text-dark); /* Unified background */
+    color: #ffffff;
+    border-radius: var(--border-radius-lg);
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+}
+
+.tool-explore h3 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+.tool-links {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column; /* Stack buttons vertically on small screens */
+    align-items: center; /* Center buttons horizontally */
+    gap: 0.5rem;
+}
+
+.tool-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center the icon and text */
+    gap: 0.5rem;
+    color: #ffffff;
+    background-color: var(--secondary-color); /* Unified color */
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.75rem;
+    text-decoration: none;
+    transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    width: 100%; /* Make buttons full width on small screens */
+    max-width: 250px; /* Limit button width on larger screens */
+}
+
+.tool-links a:hover {
+    background-color: var(--text-gray); /* Unified hover color */
+    transform: translateY(-3px);
+}
+
+.tool-links i {
+    font-size: 1.25rem;
+}
+
+/* Media queries for tablets and desktops */
+@media (min-width: 768px) {
+    .hero {
+        padding: 4rem 1.5rem;
+    }
+
+    .hero h1 {
+        font-size: 3.5rem;
+    }
+
+    .hero .description {
+        font-size: 1.125rem;
+    }
+
+    .workspace {
+        flex-direction: row;
+    }
+
+    .preview-frame {
+        flex: 3;
+    }
+
+    .controls {
+        flex: 1.5;
+    }
+
+    /* Set justify-content to center for larger screens */
+    .taptopdf-steps {
+        justify-content: center;
+    }
+
+    /* Adjust tool links for larger screens */
+    .tool-links {
+        flex-direction: row; /* Go back to horizontal alignment */
+        justify-content: center; /* Center the links on large screens */
+    }
+
+    .tool-links a {
+        width: auto; /* Revert button width */
+    }
+}

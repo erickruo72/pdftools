@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+{% block title %}PDF to PDF/A - TapToPDF{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pdftopdfa.css') }}">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base_style1.css') }}">
+<meta name="description" content="Convert your PDF files to the ISO-standard PDF/A format for long-term archiving. Our free online tool ensures your documents are compliant and future-proof in just a few clicks.">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TapToPDF">
+<meta property="og:title" content="PDF to PDF/A - TapToPDF">
+<meta property="og:description" content="Convert your PDF files to the ISO-standard PDF/A format for long-term archiving. Our free online tool ensures your documents are compliant and future-proof in just a few clicks.">
+<meta property="og:image" content="/static/css/preview.png">
+<meta property="og:image:alt" content="PDF to PDF/A Converter - TapToPDF">
+<meta property="og:url" content="{{ request.url }}">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="PDF to PDF/A - TapToPDF">
+<meta name="twitter:description" content="Convert your PDF files to the ISO-standard PDF/A format for long-term archiving. Our free online tool ensures your documents are compliant and future-proof in just a few clicks.">
+<meta name="twitter:image" content="/static/css/preview.png">
+<meta name="twitter:image:alt" content="PDF to PDF/A Converter - TapToPDF">
+
+<meta itemprop="name" content="PDF to PDF/A - TapToPDF">
+<meta itemprop="description" content="Convert your PDF files to the ISO-standard PDF/A format for long-term archiving. Our free online tool ensures your documents are compliant and future-proof in just a few clicks.">
+<meta itemprop="image" content="/static/css/preview.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="pdfa-body">
+    <div class="merge-container">
+        <div class="tool-header">
+            <h1><i class="fas fa-file-pdf"></i> Convert to PDF/A</h1>
+            <p>Convert your PDF into a long-term archive format</p>
+        </div>
+
+        <div class="upload-section" id="uploadSection">
+            <div class="drop-content">
+                <i class="bi bi-folder-plus"></i>
+                <p>Drag & Drop your PDF file here</p>
+                <span>or click to browse</span>
+            </div>
+            <input type="file" id="pdfInput" accept=".pdf" hidden />
+        </div>
+
+        <div id="fileStatusArea" class="file-item" style="display:none;">
+            <div class="file-details">
+                <i class="bi bi-folder-fill folder-icon"></i>
+                <span id="fileName"></span>
+                <span id="fileSize"></span>
+            </div>
+            <div id="statusMessageContainer" class="status-message-container"></div>
+            <div id="statusMsg" class="status-message"></div>
+        </div>
+
+        <div class="action-buttons">
+            <button id="convertBtn" class="btn btn-convert" disabled>
+                <span class="btn-text">Convert to PDF/A</span>
+                <i class="fas fa-arrow-right"></i>
+            </button>
+            <a id="downloadLink" class="btn btn-download" href="#" download style="display:none;">
+                <i class="fas fa-download"></i>
+                <span>Download PDF/A</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    const input = document.getElementById('pdfInput');
+    const uploadSection = document.getElementById('uploadSection');
+    const fileStatusArea = document.getElementById('fileStatusArea');
+    const fileName = document.getElementById('fileName');
+    const fileSize = document.getElementById('fileSize');
+    const statusMessageContainer = document.getElementById('statusMessageContainer');
+    const statusMsg = document.getElementById('statusMsg');
+    const convertBtn = document.getElementById('convertBtn');
+    const downloadLink = document.getElementById('downloadLink');
+
+    const formatBytes = (bytes) => {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    };
+
+    const truncateFileName = (fileName) => {
+        const maxChars = 9;
+        const parts = fileName.split('.');
+        const name = parts.slice(0, -1).join('.');
+        const extension = parts.pop();
+        
+        if (name.length > maxChars) {
+            return `${name.slice(0, maxChars)}...${extension}`;
+        }
+        return fileName;
+    };
+
+    const updateStatus = (message, statusType = 'normal') => {
+        statusMessageContainer.innerHTML = '';
+        statusMsg.textContent = '';
+        statusMsg.classList.remove('error');
+        
+        if (statusType === 'loading') {
+            const spinnerDiv = document.createElement('div');
+            spinnerDiv.className = 'spinner';
+            const statusSpan = document.createElement('span');
+            statusSpan.className = 'status-text';
+            statusSpan.textContent = message;
+            statusMessageContainer.appendChild(spinnerDiv);
+            statusMessageContainer.appendChild(statusSpan);
+        } else if (statusType === 'success') {
+            const successIcon = document.createElement('i');
+            successIcon.className = 'fas fa-check-circle success-icon';
+            const statusSpan = document.createElement('span');
+            statusSpan.className = 'status-text';
+            statusSpan.textContent = message;
+            statusMessageContainer.appendChild(successIcon);
+            statusMessageContainer.appendChild(statusSpan);
+        } else if (statusType === 'error') {
+            statusMsg.textContent = message;
+            statusMsg.classList.add('error');
+        }
+    };
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        uploadSection.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadSection.addEventListener(eventName, () => uploadSection.classList.add('highlight'), false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadSection.addEventListener(eventName, () => uploadSection.classList.remove('highlight'), false);
+    });
+    
+    uploadSection.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        handleFile(files[0]);
+    }, false);
+
+    uploadSection.addEventListener('click', () => {
+        input.click();
+    });
+
+    input.addEventListener('change', () => {
+        handleFile(input.files[0]);
+    });
+
+    const handleFile = (file) => {
+        if (!file || file.type !== 'application/pdf') {
+            updateStatus('Please upload a valid PDF file.', 'error');
+            fileStatusArea.style.display = 'none';
+            uploadSection.style.display = 'flex';
+            return;
+        }
+        
+        uploadSection.style.display = 'none';
+        fileStatusArea.style.display = 'flex';
+        
+        convertBtn.style.display = 'inline-flex';
+        downloadLink.style.display = 'none';
+
+        fileName.textContent = truncateFileName(file.name);
+        fileSize.textContent = formatBytes(file.size);
+        convertBtn.disabled = false;
+        
+        updateStatus('File loaded. Ready to convert.', 'success');
+    };
+
+    convertBtn.addEventListener('click', async () => {
+        const file = input.files[0];
+        if (!file) {
+            updateStatus('Please select a PDF file first.', 'error');
+            return;
+        }
+
+        convertBtn.disabled = true;
+        convertBtn.style.display = 'none';
+        downloadLink.style.display = 'none';
+
+        updateStatus('Processing your file...', 'loading');
+        
+        const form = new FormData();
+        form.append('pdf_file', file);
+        
+        let poll = null;
+
+        try {
+            const res = await fetch('/api/pdf-to-pdfa', { method: 'POST', body: form });
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.error || 'Conversion failed.');
+            }
+
+            const jobId = data.job_id;
+
+            poll = setInterval(async () => {
+                const resp = await fetch(`/api/job/status/${jobId}`);
+                const stat = await resp.json();
+
+                if (stat.status === 'finished') {
+                    clearInterval(poll);
+                    updateStatus('PDF/A file is ready!', 'success');
+                    downloadLink.href = `/api/job/download/${stat.result}`;
+                    downloadLink.style.display = 'inline-flex';
+                } else if (stat.status === 'failed') {
+                    clearInterval(poll);
+                    throw new Error('Conversion failed: ' + (stat.result || 'An unknown error occurred.'));
+                }
+            }, 1500);
+
+        } catch (error) {
+            if (poll) {
+                clearInterval(poll);
+            }
+            updateStatus(error.message, 'error');
+            convertBtn.style.display = 'inline-flex';
+        } finally {
+            convertBtn.disabled = false;
+        }
+    });
+</script>
+{% endblock %}

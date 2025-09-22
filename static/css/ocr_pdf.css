@@ -1,0 +1,183 @@
+/*
+ * This CSS file styles the OCR page specifically.
+ * It uses the .bod class to target the unique container
+ * for this page, preventing style conflicts with other
+ * parts of the application that use the 'base.html' template.
+ */
+
+/* General page container for centering and layout */
+
+
+.bod.container {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+    text-align: center;
+    max-width: 500px;
+    height: 100vh;
+    width: 90%;
+    margin: 80px auto 20px;
+}
+
+/* Heading styles */
+.bod h1 {
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 2em;
+}
+
+/* Paragraph styles */
+.bod p {
+    color: #666;
+    margin-bottom: 25px;
+    line-height: 1.5;
+}
+
+.bod p.small-text {
+    font-size: 0.9em;
+    color: #999;
+}
+
+/* Form element styling */
+.bod form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+}
+
+/* File input and label styling */
+.bod input[type="file"] {
+    display: none;
+}
+
+/* Style for the "Choose File" button (which is a label) */
+.bod .file-label {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 16px;
+    font-weight: bold;
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.bod .file-label:hover {
+    background-color: #0056b3;
+}
+
+/* Style for the filename display paragraph */
+.bod .filename-display {
+
+    font-size: 16px;
+    font-weight: normal;
+    display: block;
+    font-weight: bold;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: left;
+    color: green;
+}
+
+/* Submit button styling */
+.bod .submit-btn {
+    background-color: #28a745;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.bod .submit-btn:hover {
+    background-color: #218838;
+}
+
+/* Styling for the download button link */
+.bod .download-btn {
+    display: inline-block;
+    background-color: #007bff;
+    color: #ffffff;
+    padding: 12px 25px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    max-width: 300px;
+    box-sizing: border-box;
+}
+
+.bod .download-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Flashed messages styling */
+.bod .flashes {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.bod .flashes li {
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.bod .flashes li.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.bod .flashes li.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+    .bod.container {
+        padding: 20px;
+        width: 100%;
+        margin-top: 60px;
+    }
+
+    .bod h1 {
+        font-size: 1.5em;
+    }
+
+    .bod p {
+        font-size: 0.9em;
+    }
+    
+    .bod .download-btn,
+    .bod .submit-btn,
+    .bod .file-label,
+    .bod .filename-display {
+        font-size: 14px;
+        padding: 10px 15px;
+    }
+}

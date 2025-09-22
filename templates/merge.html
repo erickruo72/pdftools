@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block title %}Merge and Combine PDF Files Online - TapToPDF{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/merge.css') }}">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Merge PDF files online for free. Quickly combine multiple PDFs into one secure document with our fast, easy-to-use PDF merger tool. No downloads or installation required.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TapToPDF">
+<meta property="og:title" content="Merge and Combine PDF Files Online - TapToPDF">
+<meta property="og:description" content="Merge PDF files online for free. Quickly combine multiple PDFs into one secure document with our fast, easy-to-use PDF merger tool. No downloads or installation required.">
+<meta property="og:image" content="/static/css/preview.png">
+<meta property="og:image:alt" content="Merge and Combine PDF Files Online - TapToPDF">
+<meta property="og:url" content="{{ request.url }}">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Merge and Combine PDF Files Online - TapToPDF">
+<meta name="twitter:description" content="Merge PDF files online for free. Quickly combine multiple PDFs into one secure document with our fast, easy-to-use PDF merger tool. No downloads or installation required.">
+<meta name="twitter:image" content="/static/css/preview.png">
+<meta name="twitter:image:alt" content="Merge and Combine PDF Files Online - TapToPDF">
+
+<meta itemprop="name" content="Merge and Combine PDF Files Online - TapToPDF">
+<meta itemprop="description" content="Merge PDF files online for free. Quickly combine multiple PDFs into one secure document with our fast, easy-to-use PDF merger tool. No downloads or installation required.">
+<meta itemprop="image" content="/static/css/preview.png">
+
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+    a{
+        text-decoration: none;
+    }
+</style>
+<body>
+
+<main style="min-height: 100vh;">
+    <div class="pdfword-body">
+      <div class="merge-container">
+          <div class="tool-header">
+              <h1><i class="fas fa-link"></i> Merge PDF Files</h1>
+              <p>Combine multiple PDF files into one single document.</p>
+          </div>
+
+          <div id="upload-section" class="upload-section">
+              <input type="file" id="file-input" class="d-none" multiple accept=".pdf">
+              <div class="drop-content">
+                  <i class="bi bi-folder-plus"></i>
+                  <p>Click or drag your PDFs here</p>
+                  <span>It's fast, easy, and free.</span>
+              </div>
+          </div>
+
+          <div id="file-preview-section" class="d-none">
+              <h2 class="h4 fw-bold text-dark mb-4">Reorder and Review Files</h2>
+              <div id="file-list"></div>
+              <div class="action-buttons">
+                  <button id="add-more-button" class="btn btn-secondary">Add More Files</button>
+                  <button id="merge-button" class="btn btn-purple">Merge PDF</button>
+              </div>
+          </div>
+
+          <div id="job-status-section" class="job-status-section d-none">
+              <div class="spinner"></div>
+              <p id="status-message" class="small fw-semibold">Your files are being merged. Please wait...</p>
+              <div id="job-progress-bar" class="progress-bar d-none">
+                  <div id="job-progress" class="progress" style="width:0%; height:8px; background:#4c1d95;"></div>
+              </div>
+          </div>
+
+          <div class="action-buttons d-none" id="download-section">
+              <a id="download-link" href="#" class="btn btn-purple" target="_blank" rel="noopener noreferrer">
+                  <i class="fas fa-download"></i> Download Merged PDF
+              </a>
+          </div>
+          
+          <div id="message-container" class="mt-4 p-3 rounded fw-semibold d-none"></div>
+
+
+
+<div id="post-download-section" class="d-none mt-5">
+  <h2 class="h3 fw-bold text-dark mb-4 text-center">What's Next?</h2>
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-8">
+      <div class="text-center">
+        <div class="mb-3">
+          <i class="bi bi-tools text-primary" style="font-size: 2.5rem;"></i>
+        </div>
+        <h3 class="h5 fw-semibold">Try Other Tools</h3>
+        <p class="small text-secondary mb-4">
+          Explore our most popular tools to organize and optimize your PDF files.
+        </p>
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+          <a href="/split-pdf" class="after-download-btn">
+            <i class="bi bi-scissors"></i> Split
+          </a>
+          <a href="/compress-pdf" class="after-download-btn">
+            <i class="bi bi-arrow-down-circle"></i> Compress
+          </a>
+          <a href="/pdf-to-jpg" class="after-download-btn">
+            <i class="bi bi-file-image"></i> PDF → JPG
+          </a>
+          <a href="/protect-pdf" class="after-download-btn">
+            <i class="bi bi-shield-lock"></i> Protect
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+          
+      </div>
+    </div>
+  </main>
+
+<div class="container my-5 p-5">
+    <h2 class="h3 fw-bold text-center mb-5 text-dark">How to Merge PDF Files Online for Free</h2>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
+        <div class="col d-flex flex-column align-items-center text-center p-3">
+            <div class="mb-2">
+                <i class="fas fa-upload icon-size-2xl text-primary"></i>
+            </div>
+            <h3 class="fw-semibold h5 mb-2 text-dark">Step 1: Upload Your PDFs</h3>
+            <p class="text-muted">Select the PDFs you want to combine. Our tool can handle as many documents as you need, big or small.</p>
+        </div>
+        <div class="col d-flex flex-column align-items-center text-center p-3">
+            <div class="mb-2">
+                <i class="fas fa-sort-amount-down icon-size-2xl text-primary"></i>
+            </div>
+            <h3 class="fw-semibold h5 mb-2 text-dark">Step 2: Order Your Pages</h3>
+            <p class="text-muted">Arrange the pages and documents in the exact order you want them to appear in the final file.</p>
+        </div>
+        <div class="col d-flex flex-column align-items-center text-center p-3">
+            <div class="mb-2">
+                <i class="fas fa-cogs icon-size-2xl text-primary"></i>
+            </div>
+            <h3 class="fw-semibold h5 mb-2 text-dark">Step 3: Click 'Merge'</h3>
+            <p class="text-muted">Our powerful servers will get to work, seamlessly combining your files into one document in seconds.</p>
+        </div>
+        <div class="col d-flex flex-column align-items-center text-center p-3">
+            <div class="mb-2">
+                <i class="fas fa-download icon-size-2xl text-primary"></i>
+            </div>
+            <h3 class="fw-semibold h5 mb-2 text-dark">Step 4: Download Your File</h3>
+            <p class="text-muted">Your new PDF will be ready for instant download. You can also quickly <a href="{{ url_for('main.compress_pdf_page') }}" class="text-decoration-none text-primary fw-medium">compress the file</a> if it's too large.</p>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5 p-5">
+    <h2 class="h3 fw-bold text-center mb-5 text-dark">Why Choose Our Free PDF Merger?</h2>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+        <div class="col d-flex flex-column align-items-center text-center p-3">
+            <i class="fas fa-check-circle text-success icon-size-4xl mb-4"></i>
+            <h3 class="fw-bold h5 mb-2 text-dark">Completely Free & Online</h3>
+            <p class="text-muted">Our tool is entirely free, with no hidden costs or watermarks. Combine PDFs online without needing to install any software.</p>
+        </div>
+        <div class="col d-flex flex-column align-items-center text-center p-3">
+            <i class="fas fa-lock text-success icon-size-4xl mb-4"></i>
+            <h3 class="fw-bold h5 mb-2 text-dark">Guaranteed Security</h3>
+            <p class="text-muted">Your privacy is our top priority. All files are encrypted during the process and automatically deleted from our servers within one hour. Your documents are safe with us.</p>
+        </div>
+        <div class="col d-flex flex-column align-items-center text-center p-3">
+            <i class="fas fa-tachometer-alt text-success icon-size-4xl mb-4"></i>
+            <h3 class="fw-bold h5 mb-2 text-dark">Lightning-Fast Processing</h3>
+            <p class="text-muted">Don't wait for slow uploads and processing. Our powerful servers are optimized for speed, ensuring you get your new PDF in a flash.</p>
+        </div>
+        <div class="col d-flex flex-column align-items-center text-center p-3">
+            <div class="mb-4">
+                <i class="bi bi-laptop icon-size-4xl text-success"></i>
+            </div>
+            <h3 class="fw-bold h5 mb-2 text-dark">Works on All Devices</h3>
+            <p class="text-muted">Access our tool from anywhere. It works seamlessly on any operating system or browser, providing a consistent experience on all your devices. Need to <a href="{{ url_for('main.split_pdf_page') }}" class="text-decoration-none text-primary fw-medium">extract a single page</a>? You can do that too!</p>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5 p-5">
+    <h2 class="h3 fw-bold text-center mb-5 text-dark">Frequently Asked Questions</h2>
+    <div class="faq-accordion-flat">
+        <div class="faq-item-flat">
+            <h3 class="fw-semibold h5 mb-2 text-dark">How do I merge PDF files?</h3>
+            <p class="text-muted">Simply upload your PDF files, arrange them in the correct order, and click the 'Merge' button. Your new combined file will be ready to download.</p>
+        </div>
+        <div class="faq-item-flat">
+            <h3 class="fw-semibold h5 mb-2 text-dark">Is it free to use your PDF merger?</h3>
+            <p class="text-muted">Yes, our tool is completely free to use. There are no hidden fees or limitations on the number of files you can merge.</p>
+        </div>
+        <div class="faq-item-flat">
+            <h3 class="fw-semibold h5 mb-2 text-dark">Can I reorder the pages after uploading?</h3>
+            <p class="text-muted">Yes! You can easily drag and drop pages or entire documents to change their order before you begin the merge process.</p>
+        </div>
+        <div class="faq-item-flat">
+            <h3 class="fw-semibold h5 mb-2 text-dark">Can I merge password-protected PDFs?</h3>
+            <p class="text-muted">Yes, but you will need to enter the correct password for each protected file before you can merge it.</p>
+        </div>
+        <div class="faq-item-flat">
+            <h3 class="fw-semibold h5 mb-2 text-dark">Are my files safe?</h3>
+            <p class="text-muted">Yes, we use a secure connection for all file transfers. Your files are automatically and permanently deleted from our servers shortly after you are done. Your privacy is our top priority.</p>
+        </div>
+        <div class="faq-item-flat">
+            <h3 class="fw-semibold h5 mb-2 text-dark">How can I reduce the size of the final merged PDF?</h3>
+            <p class="text-muted">If your new file is too large, you can reduce its size without losing quality by using our Compress PDF tool.</p>
+        </div>
+    </div>
+</div>
+
+   <script  src="static/js/merge.js"></script>
+
+
+
+</body>
+</html>
+{% endblock %}

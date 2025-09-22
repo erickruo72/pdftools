@@ -1,0 +1,670 @@
+{% extends "base.html" %}
+{% block title %}Redact PDF - TapToPDF{% endblock %}
+{% block head %}
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/redact-pdf.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base_style1.css') }}">
+<meta name="description" content="Permanently remove sensitive text and images from your PDF documents for free. Our online tool lets you securely redact information, ensuring it cannot be recovered.">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TapToPDF">
+<meta property="og:title" content="Redact PDF - TapToPDF">
+<meta property="og:description" content="Permanently remove sensitive text and images from your PDF documents for free. Our online tool lets you securely redact information, ensuring it cannot be recovered.">
+<meta property="og:image" content="/static/css/preview.png">
+<meta property="og:image:alt" content="Redact PDF - Permanently Remove Text - TapToPDF">
+<meta property="og:url" content="{{ request.url }}">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Redact PDF - TapToPDF">
+<meta name="twitter:description" content="Permanently remove sensitive text and images from your PDF documents for free. Our online tool lets you securely redact information, ensuring it cannot be recovered.">
+<meta name="twitter:image" content="/static/css/preview.png">
+<meta name="twitter:image:alt" content="Redact PDF - Permanently Remove Text - TapToPDF">
+
+<meta itemprop="name" content="Redact PDF - TapToPDF">
+<meta itemprop="description" content="Permanently remove sensitive text and images from your PDF documents for free. Our online tool lets you securely redact information, ensuring it cannot be recovered.">
+<meta itemprop="image" content="/static/css/preview.png">
+<style>
+    /* New styles for the FAB and sidebar */
+    .fab {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .fab:hover {
+        transform: scale(1.1);
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 200;
+        right: -300px; /* Hidden by default */
+        width: 280px;
+        height: 100%;
+        background-color: #f8f9fa;
+        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+        transition: right 0.3s ease-in-out;
+        z-index: 999;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .sidebar.open {
+        right: 0;
+    }
+
+    .sidebar h2 {
+        margin-top: 0;
+        border-bottom: 1px solid #dee2e6;
+        padding-bottom: 10px;
+    }
+
+    .sidebar #controls {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .sidebar #controls label,
+    .sidebar #controls button {
+        width: 100%; /* Full width for better mobile UX */
+    }
+
+    .sidebar #status-area {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 998;
+        display: none;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+<button class="fab" id="fabButton">
+    <i class="fas fa-bars"></i>
+</button>
+
+<div class="sidebar" id="sidebar">
+    <h2>Redact PDF</h2>
+    <p>Permanently remove sensitive information from PDFs</p>
+
+    <div id="controls">
+        <label for="fileInput" class="custom-file-upload">
+            Choose File
+        </label>
+        <input type="file" id="fileInput" accept="application/pdf">
+        <button id="btnCreateRedactBox">Create Redaction Box</button>
+        <button id="btnRedact">Apply Redactions</button>
+    </div>
+    <div id="status-area"></div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+
+<div class="viewer">
+    <div id="pagesContainer"></div>
+</div>
+
+<div class="content-wrapper">
+    <section class="why-redact-section">
+        <h2 class="section-title">Why Redact with TapToPDF?</h2>
+        <div class="card-grid">
+            <div class="content-card feature-card">
+                <i class="fas fa-lock"></i>
+                <h3>Unmatched Security</h3>
+                <p>Your privacy is our priority. We use robust encryption to protect your files, and they are permanently deleted from our servers after each use.</p>
+            </div>
+            <div class="content-card feature-card">
+                <i class="fas fa-bolt"></i>
+                <h3>Lightning-Fast</h3>
+                <p>Don't wait. Our cloud-based tool processes your documents at incredible speed, so you can redact and download in seconds.</p>
+            </div>
+            <div class="content-card feature-card">
+                <i class="fas fa-unlock-alt"></i>
+                <h3>Totally Free</h3>
+                <p>Access our full suite of professional PDF tools without any hidden fees, subscriptions, or watermarks. Powerful tools should be accessible to all.</p>
+            </div>
+            <div class="content-card feature-card">
+                <i class="fas fa-magic"></i>
+                <h3>Intuitive Design</h3>
+                <p>Our clean interface makes complex tasks simple. With just a few clicks, you can precisely redact content, even if you're a first-time user.</p>
+            </div>
+        </div>
+    </section>
+
+    <hr>
+
+    <section class="how-it-works-section">
+        <h2 class="section-title">How to Redact a PDF: A Simple Guide</h2>
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-icon">1</div>
+                <h4>Select Your File </h4>
+                <p>Click the Choose File button to upload the document you want to redact. We'll load it into our secure, online editor.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-icon">2</div>
+                <h4>Draw Redaction Boxes </h4>
+                <p>Use our tool to draw a box over any text or section you need to permanently remove. You can redact multiple parts on a page and across the entire document.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-icon">3</div>
+                <h4>Blackout & Download </h4>
+                <p>When you're ready, click Apply Redactions. Our system will securely and irreversibly remove the selected content and prepare your file for download.</p>
+            </div>
+        </div>
+    </section>
+
+    <hr>
+
+    <section class="seo-faq-section">
+        <div class="content-card">
+            <h3>Redaction vs. Highlighting: Know the Difference</h3>
+            <p>This is a critical distinction that can compromise your privacy. A quick highlight is not the same as a secure redaction.</p>
+            <ul>
+                <li><strong>Highlighting</strong> is a temporary visual effect. The text remains in the document's code, so anyone can simply copy and paste it to reveal the information.</li>
+                <li><strong>Redaction</strong> is the permanent removal of data. When you redact with TapToPDF, the selected content is completely deleted from the file, ensuring it can never be recovered.</li>
+            </ul>
+            <p class="key-takeaway"><strong>For true privacy, always choose redaction to permanently blackout sensitive information like names, addresses, and account numbers.</strong></p>
+        </div>
+
+        <div class="content-card">
+            <h3>Frequently Asked Questions</h3>
+            <div class="faq-item">
+                <h4>Is redacting a PDF secure?</h4>
+                <p>Yes. Our process permanently removes data from your PDF. Nothing is just hidden; it's deleted. This provides true data privacy and security, making it a reliable solution for sensitive information.</p>
+            </div>
+            <div class="faq-item">
+                <h4>Can I redact multiple sections in one PDF?</h4>
+                <p>Absolutely. You can draw as many redaction boxes as you need on a single page or across multiple pages before applying the redaction. The process will handle all marked areas at once.</p>
+            </div>
+            <div class="faq-item">
+                <h4>Do I need to install software to redact a PDF?</h4>
+                <p>Nope. Our tool is entirely web-based. Just visit the page, upload your PDF, and you can begin redacting without any downloads or installations.</p>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h3>Discover More Tools</h3>
+            <ul class="related-tools-list">
+              <a href="/rotate-pdf"><i class="bi bi-arrow-clockwise"></i> Rotate PDF</a>
+              <a href="/add-pdf-page-numbers"><i class="bi bi-123"></i> Add page numbers</a>
+              <a href="/add-watermark"><i class="bi bi-droplet"></i> Add watermark</a>
+              <a href="/edit-pdf"><i class="bi bi-pencil"></i> Edit PDF</a>
+            </ul>
+        </div>
+    </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
+
+(() => {
+    // New DOM elements
+    const fabButton = document.getElementById('fabButton');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+
+    // Add event listeners for the FAB and overlay
+    fabButton.addEventListener('click', () => {
+        sidebar.classList.toggle('open');
+        overlay.style.display = sidebar.classList.contains('open') ? 'block' : 'none';
+    });
+
+    overlay.addEventListener('click', () => {
+        sidebar.classList.remove('open');
+        overlay.style.display = 'none';
+    });
+
+    // --- The rest of your JavaScript remains the same ---
+  const pagesContainer = document.getElementById("pagesContainer");
+  const fileInput = document.getElementById("fileInput");
+  const btnCreateRedactBox = document.getElementById("btnCreateRedactBox");
+  const btnRedact = document.getElementById("btnRedact");
+  const statusArea = document.getElementById("status-area");
+  const viewer = document.querySelector('.viewer');
+
+  let pdfDoc = null;
+  let redactBoxes = [];
+  let pageElements = [];
+  let pageViewports = [];
+  const devicePixelRatio = window.devicePixelRatio || 1;
+
+  let isDrawing = false;
+  let startX, startY;
+  let currentRedactBoxEl = null;
+  let currentPageWrap = null;
+  
+  let isDraggingOrResizing = false;
+
+  function showStatus(message, showSpinner = false) {
+    statusArea.innerHTML = showSpinner ? `<span class="spinner"></span><span>${message}</span>` : `<span>${message}</span>`;
+  }
+
+  function hideStatus() {
+    statusArea.innerHTML = '';
+  }
+
+  async function loadPdf(file) {
+    if (!file) return;
+
+    showStatus("Loading PDF...", true);
+    pagesContainer.innerHTML = "";
+    redactBoxes = [];
+    pageElements = [];
+    pageViewports = [];
+    const url = URL.createObjectURL(file);
+    try {
+      pdfDoc = await pdfjsLib.getDocument(url).promise;
+      await renderAllPages();
+      hideStatus();
+    } catch (error) {
+      alert("Failed to load PDF. Please try again.");
+      console.error(error);
+      hideStatus();
+    }
+  }
+
+  async function renderAllPages() {
+    if (!pdfDoc) return;
+    pagesContainer.innerHTML = "";
+    pageElements = [];
+    pageViewports = [];
+
+    for (let i = 0; i < pdfDoc.numPages; i++) {
+        const page = await pdfDoc.getPage(i + 1);
+        const originalViewport = page.getViewport({ scale: 1 });
+
+        const baseScale = 1.5;
+        const smallScreenBreakpoint = 768; // px
+
+        const scale = window.innerWidth < smallScreenBreakpoint
+          ? (viewer.clientWidth - 40) / originalViewport.width
+          : baseScale;
+                
+
+        
+        const viewport = page.getViewport({ scale: scale });
+
+        const canvas = document.createElement("canvas");
+        canvas.className = "pdf-canvas";
+        
+        // Set canvas dimensions for high-DPI screens
+        canvas.width = viewport.width * devicePixelRatio;
+        canvas.height = viewport.height * devicePixelRatio;
+        
+        // Set CSS dimensions to match viewport dimensions for display
+        canvas.style.width = `${viewport.width}px`;
+        canvas.style.height = `${viewport.height}px`;
+
+        const ctx = canvas.getContext("2d");
+        const renderContext = {
+            canvasContext: ctx,
+            viewport: viewport,
+            transform: [devicePixelRatio, 0, 0, devicePixelRatio, 0, 0]
+        };
+        await page.render(renderContext).promise;
+
+        const wrap = document.createElement("div");
+        wrap.className = "page-wrap";
+        wrap.dataset.pageIndex0 = i;
+        wrap.style.width = `${viewport.width}px`;
+        wrap.style.height = `${viewport.height}px`;
+        wrap.appendChild(canvas);
+        pagesContainer.appendChild(wrap);
+
+        pageElements.push(wrap);
+        pageViewports.push(originalViewport);
+    }
+    
+    redactBoxes.forEach(r => {
+        const pageWrap = pageElements.find(el => parseInt(el.dataset.pageIndex0) === r.page_number);
+        if (pageWrap) {
+            pageWrap.appendChild(r.el);
+        }
+    });
+  }
+
+  function createRedactBoxElement() {
+    const box = document.createElement("div");
+    box.className = "redact-box";
+    return box;
+  }
+
+  function addRedactionControls(box, redactObj) {
+    ['nw', 'ne', 'se', 'sw'].forEach(pos => {
+      const handle = document.createElement("div");
+      handle.className = `redact-handle ${pos}`;
+      box.appendChild(handle);
+    });
+
+    const deleteBtn = document.createElement("div");
+    deleteBtn.className = "redact-delete";
+    deleteBtn.textContent = "X";
+    box.appendChild(deleteBtn);
+
+    deleteBtn.addEventListener("click", e => {
+      e.stopPropagation();
+      box.remove();
+      const index = redactBoxes.indexOf(redactObj);
+      if (index > -1) {
+        redactBoxes.splice(index, 1);
+      }
+    });
+
+    enableDragResize(box, redactObj);
+  }
+
+  function enableDragResize(box, obj) {
+    let startX, startY, origX, origY, origW, origH;
+    let resizing = false;
+
+    function getCoords(event) {
+        const isTouch = event.type.startsWith('touch');
+        if (isTouch) {
+            return {
+                x: event.touches[0].clientX,
+                y: event.touches[0].clientY
+            };
+        } else {
+            return {
+                x: event.clientX,
+                y: event.clientY
+            };
+        }
+    }
+
+    box.addEventListener("mousedown", e => {
+      e.stopPropagation();
+      isDraggingOrResizing = true;
+      if (e.target.className.includes("redact-handle")) {
+        resizing = e.target.className.split(" ")[1];
+      } else {
+        box.style.cursor = "grabbing";
+      }
+      const coords = getCoords(e);
+      startX = coords.x;
+      startY = coords.y;
+      origX = parseFloat(box.style.left); origY = parseFloat(box.style.top);
+      origW = parseFloat(box.style.width); origH = parseFloat(box.style.height);
+      document.body.style.userSelect = "none";
+    });
+
+    box.addEventListener("touchstart", e => {
+      e.stopPropagation();
+      isDraggingOrResizing = true;
+      if (e.target.className.includes("redact-handle")) {
+        resizing = e.target.className.split(" ")[1];
+      }
+      const coords = getCoords(e);
+      startX = coords.x;
+      startY = coords.y;
+      origX = parseFloat(box.style.left); origY = parseFloat(box.style.top);
+      origW = parseFloat(box.style.width); origH = parseFloat(box.style.height);
+      document.body.style.userSelect = "none";
+    });
+
+    document.addEventListener("mousemove", handleMove);
+    document.addEventListener("touchmove", handleMove, { passive: false });
+
+    function handleMove(e) {
+      if (!isDraggingOrResizing) return;
+      e.preventDefault();
+      
+      const coords = getCoords(e);
+      const dx = coords.x - startX;
+      const dy = coords.y - startY;
+      const pageWrap = box.closest('.page-wrap');
+      const rect = pageWrap.getBoundingClientRect();
+
+      if (resizing) {
+        switch (resizing) {
+          case 'se':
+            let newW_se = Math.max(20, origW + dx);
+            let newH_se = Math.max(10, origH + dy);
+            box.style.width = Math.min(newW_se, rect.width - origX) + "px";
+            box.style.height = Math.min(newH_se, rect.height - origY) + "px";
+            break;
+          case 'sw':
+            let newW_sw = Math.max(20, origW - dx);
+            let newH_sw = Math.max(10, origH + dy);
+            box.style.width = newW_sw + "px";
+            box.style.left = origX + (origW - newW_sw) + "px";
+            box.style.height = Math.min(newH_sw, rect.height - origY) + "px";
+            break;
+          case 'ne':
+            let newW_ne = Math.max(20, origW + dx);
+            let newH_ne = Math.max(10, origH - dy);
+            box.style.width = Math.min(newW_ne, rect.width - origX) + "px";
+            box.style.height = newH_ne + "px";
+            box.style.top = origY + (origH - newH_ne) + "px";
+            break;
+          case 'nw':
+            let newW_nw = Math.max(20, origW - dx);
+            let newH_nw = Math.max(10, origH - dy);
+            box.style.width = newW_nw + "px";
+            box.style.left = origX + (origW - newW_nw) + "px";
+            box.style.height = newH_nw + "px";
+            box.style.top = origY + (origH - newH_nw) + "px";
+            break;
+        }
+      } else {
+        let newX = origX + dx;
+        let newY = origY + dy;
+        
+        const finalParentRect = pageWrap.getBoundingClientRect();
+        newX = Math.max(0, Math.min(newX, finalParentRect.width - parseFloat(box.style.width)));
+        newY = Math.max(0, Math.min(newY, finalParentRect.height - parseFloat(box.style.height)));
+        
+        box.style.left = `${newX}px`;
+        box.style.top = `${newY}px`;
+      }
+      obj.x = parseFloat(box.style.left); 
+      obj.y = parseFloat(box.style.top);
+      obj.width = parseFloat(box.style.width); 
+      obj.height = parseFloat(box.style.height);
+    }
+    
+    document.addEventListener("mouseup", handleEnd);
+    document.addEventListener("touchend", handleEnd);
+
+    function handleEnd() {
+      isDraggingOrResizing = false;
+      resizing = false;
+      box.style.cursor = "move";
+      document.body.style.userSelect = "";
+    }
+  }
+
+  fileInput.addEventListener("change", (e) => {
+    if (e.target.files.length > 0) {
+      loadPdf(e.target.files[0]);
+    }
+  });
+
+  btnCreateRedactBox.addEventListener("click", () => {
+    if (!pdfDoc) {
+      alert("Load a PDF first.");
+      return;
+    }
+    isDrawing = !isDrawing;
+    document.body.classList.toggle('drawing-mode', isDrawing);
+  });
+  
+  function getRelativeCoords(event, container) {
+      const isTouch = event.type.startsWith('touch');
+      const clientX = isTouch ? event.touches[0].clientX : event.clientX;
+      const clientY = isTouch ? event.touches[0].clientY : event.clientY;
+      const containerRect = container.getBoundingClientRect();
+      return {
+          x: clientX - containerRect.left,
+          y: clientY - containerRect.top
+      };
+  }
+
+  pagesContainer.addEventListener("mousedown", handleStartDrawing);
+  pagesContainer.addEventListener("touchstart", handleStartDrawing, { passive: false });
+
+  function handleStartDrawing(e) {
+    if (!isDrawing || isDraggingOrResizing) return;
+    if (e.target.closest('.redact-box')) return;
+
+    e.preventDefault();
+
+    const targetPage = e.target.closest('.page-wrap');
+    if (!targetPage) return;
+
+    currentPageWrap = targetPage;
+    const coords = getRelativeCoords(e, currentPageWrap);
+    startX = coords.x;
+    startY = coords.y;
+
+    currentRedactBoxEl = createRedactBoxElement();
+    currentRedactBoxEl.style.left = `${startX}px`;
+    currentRedactBoxEl.style.top = `${startY}px`;
+    currentRedactBoxEl.style.width = '0px';
+    currentRedactBoxEl.style.height = '0px';
+    currentPageWrap.appendChild(currentRedactBoxEl);
+  }
+
+  pagesContainer.addEventListener("mousemove", handleDrawing);
+  pagesContainer.addEventListener("touchmove", handleDrawing, { passive: false });
+
+  function handleDrawing(e) {
+    if (!isDrawing || !currentRedactBoxEl || isDraggingOrResizing) return;
+    e.preventDefault();
+
+    const coords = getRelativeCoords(e, currentPageWrap);
+    const currentX = coords.x;
+    const currentY = coords.y;
+
+    const newLeft = Math.min(startX, currentX);
+    const newTop = Math.min(startY, currentY);
+    const newWidth = Math.abs(currentX - startX);
+    const newHeight = Math.abs(currentY - startY);
+
+    currentRedactBoxEl.style.left = `${newLeft}px`;
+    currentRedactBoxEl.style.top = `${newTop}px`;
+    currentRedactBoxEl.style.width = `${newWidth}px`;
+    currentRedactBoxEl.style.height = `${newHeight}px`;
+  }
+
+  pagesContainer.addEventListener("mouseup", handleEndDrawing);
+  pagesContainer.addEventListener("touchend", handleEndDrawing);
+
+  function handleEndDrawing(e) {
+    if (!isDrawing || !currentRedactBoxEl) return;
+    if (e.type.startsWith('touch') && e.touches.length > 0) return;
+
+    const finalLeft = parseFloat(currentRedactBoxEl.style.left);
+    const finalTop = parseFloat(currentRedactBoxEl.style.top);
+    const finalWidth = parseFloat(currentRedactBoxEl.style.width);
+    const finalHeight = parseFloat(currentRedactBoxEl.style.height);
+
+    if (finalWidth > 5 && finalHeight > 5) {
+        const redactObj = {
+          page_number: parseInt(currentPageWrap.dataset.pageIndex0),
+          x: finalLeft,
+          y: finalTop,
+          width: finalWidth,
+          height: finalHeight,
+          el: currentRedactBoxEl
+        };
+        redactBoxes.push(redactObj);
+        addRedactionControls(currentRedactBoxEl, redactObj);
+    } else {
+      currentRedactBoxEl.remove();
+    }
+
+    isDrawing = false;
+    document.body.classList.remove('drawing-mode');
+    currentRedactBoxEl = null;
+    currentPageWrap = null;
+  }
+
+  btnRedact.addEventListener("click", async () => {
+    if (!fileInput.files[0]) return alert("Upload PDF first.");
+    if (!redactBoxes.length) return alert("Add at least one redaction box.");
+
+    showStatus("Applying Redactions...", true);
+    
+    const scaledRedactions = redactBoxes.map(r => {
+      const pageIndex = r.page_number;
+      const pageViewport = pageViewports[pageIndex];
+      const pageElement = pageElements[pageIndex];
+      
+      const scaleX = pageElement.clientWidth / pageViewport.width;
+      const scaleY = pageElement.clientHeight / pageViewport.height;
+
+      return {
+        page_number: r.page_number,
+        x: r.x / scaleX,
+        y: r.y / scaleY,
+        width: r.width / scaleX,
+        height: r.height / scaleY
+      };
+    });
+
+    const formData = new FormData();
+    formData.append("pdf_file", fileInput.files[0]);
+    formData.append("redactions", JSON.stringify(scaledRedactions));
+
+    try {
+      const res = await fetch("/api/pdf/redact", { method: "POST", body: formData });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to submit redaction job");
+
+      const jobId = data.job_id;
+      showStatus("Redaction job submitted. Processing...", true);
+
+      const pollTimer = setInterval(async () => {
+        const r = await fetch(`/api/job/status/${jobId}`);
+        const js = await r.json();
+        if (js.status === "finished") {
+          clearInterval(pollTimer);
+          const filename = js.result;
+          showStatus(`<a href="/api/job/download/${filename}" target="_blank" style="color:#fff;">Download Redacted PDF</a>`, false);
+        } else if (js.status === "failed") {
+          clearInterval(pollTimer);
+          showStatus(`Redaction failed: ${js.result || "Unknown error"}`, false);
+        } else {
+          showStatus(`Status: ${js.status}`, true);
+        }
+      }, 1000);
+    } catch (error) {
+      alert("Error: " + error.message);
+      hideStatus();
+    }
+  });
+})();
+</script>
+
+{% endblock %}

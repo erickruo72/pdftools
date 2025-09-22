@@ -1,0 +1,109 @@
+/* /home/erickruo/my_project/static/requirements.css */
+
+/*
+    -----------------------------------------------------
+    MOBILE-FIRST STYLES (for screens up to 767px)
+    -----------------------------------------------------
+*/
+.requirements-page-body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f4f4f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.requirements-page-container {
+    /* Fluid width with padding for mobile */
+    width: 100%;
+    padding: 1.5rem; /* Use rem for responsive spacing */
+    box-sizing: border-box; /* Ensure padding is included in the total width */
+}
+
+.requirements-page-container h1, 
+.requirements-page-container h2 {
+    color: #333;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 0.5rem;
+    margin-top: 1.5rem;
+}
+
+.requirements-page-container h1 {
+    font-size: 1.8rem; /* Smaller font size for mobile headlines */
+}
+
+.requirements-page-container h2 {
+    font-size: 1.4rem; /* Smaller font size for mobile subheadings */
+}
+
+.requirements-page-container p,
+.requirements-page-container li {
+    font-size: 1rem; /* Standard font size for readability */
+    margin-bottom: 1rem;
+}
+
+.requirements-page-container ul {
+    list-style: disc;
+    padding-left: 1.5rem;
+}
+
+.requirements-page-container a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.requirements-page-container a:hover {
+    color: #0056b3;
+}
+
+.contact-info {
+    margin: 1rem 0;
+    padding: 1rem;
+    border-left: 4px solid #007bff;
+    background-color: #e9f5ff;
+}
+
+.requirements-page-footer {
+    text-align: center;
+    padding: 1rem;
+    margin-top: 2rem;
+    border-top: 1px solid #ddd;
+    color: #555;
+}
+
+.requirements-page-footer a {
+    color: #555;
+    text-decoration: none;
+    margin: 0 0.5rem;
+}
+
+.requirements-page-footer a:hover {
+    color: #007bff;
+}
+
+/*
+    -----------------------------------------------------
+    DESKTOP STYLES (for screens 768px and wider)
+    -----------------------------------------------------
+*/
+@media (min-width: 768px) {
+    .requirements-page-container {
+        max-width: 800px;
+        margin: 2rem auto; /* Larger margin for desktops */
+        padding: 2rem;
+    }
+
+    .requirements-page-container h1 {
+        font-size: 1.5rem; /* Larger font size for desktops */
+    }
+
+    .requirements-page-container h2 {
+        font-size: 1.0rem; /* Larger font size for desktops */
+    }
+
+    .requirements-page-container p,
+    .requirements-page-container li {
+        font-size: 1.1rem; /* Slightly larger text for better readability on big screens */
+    }
+}

@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block head %}
+    <meta charset="utf-8" />
+    <title>PDF Editor - TapToPDF</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/edit-pdf.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/base_style1.css') }}">
+
+    <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
+    </script>
+    
+<meta name="description" content="Edit PDF files online for free. Add text, images, and annotations, fill out forms, and sign documents with our easy-to-use PDF editor. No downloads or sign-ups required.">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TapToPDF">
+<meta property="og:title" content="PDF Editor - TapToPDF">
+<meta property="og:description" content="Edit PDF files online for free. Add text, images, and annotations, fill out forms, and sign documents with our easy-to-use PDF editor. No downloads or sign-ups required.">
+<meta property="og:image" content="/static/css/preview.png">
+<meta property="og:image:alt" content="PDF Editor - TapToPDF">
+<meta property="og:url" content="{{ request.url }}">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="PDF Editor - TapToPDF">
+<meta name="twitter:description" content="Edit PDF files online for free. Add text, images, and annotations, fill out forms, and sign documents with our easy-to-use PDF editor. No downloads or sign-ups required.">
+<meta name="twitter:image" content="/static/css/preview.png">
+<meta name="twitter:image:alt" content="PDF Editor - TapToPDF">
+
+<meta itemprop="name" content="PDF Editor - TapToPDF">
+<meta itemprop="description" content="Edit PDF files online for free. Add text, images, and annotations, fill out forms, and sign documents with our easy-to-use PDF editor. No downloads or sign-ups required.">
+<meta itemprop="image" content="/static/css/preview.png">
+{% endblock %}
+
+{% block content %}
+
+    <header class="toolbar">
+        <a href="#home" class="toolbar-btn green">Annotate / Edit PDF</a>
+
+        <div class="flex items-center gap-1">
+            <label class="toolbar-label">Upload PDF:</label>
+            <label class="file-input-label">
+                <svg xmlns="http://www.w3.org/2000/svg" style="height: 1rem; width: 1rem;" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L6.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                </svg>
+                <span style="font-size: 0.75rem;">Choose File</span>
+                <input type="file" id="fileInput" accept="application/pdf" class="hidden" />
+            </label>
+            <button id="btnUpload" class="toolbar-btn blue">Load</button>
+        </div>
+
+        <div class="flex items-center gap-1">
+            <label class="toolbar-label" style="margin-left: 0.5rem;">Add Text:</label>
+            <input type="checkbox" id="enableSigText" style="width: 0.75rem; height: 0.75rem; border-radius: 0.25rem; border-color: #d1d5db;"/>
+            <label class="toolbar-label">Font:</label>
+            <select id="sigFont" class="toolbar-select">
+                <option>Dancing Script</option>
+                <option>Great Vibes</option>
+                <option>Pacifico</option>
+                <option>Satisfy</option>
+                <option>Helvetica</option>
+            </select>
+            <label class="toolbar-label">Size:</label>
+            <input type="number" id="sigSize" min="8" max="120" value="24" class="toolbar-input w-12"/>
+        </div>
+
+        <div class="flex items-center gap-1">
+            <label class="toolbar-label">Color:</label>
+            <div class="flex gap-2">
+                <label class="color-label">
+                    <input type="radio" name="sigColor" value="black" checked />
+                    <span>Black</span>
+                </label>
+                <label class="color-label">
+                    <input type="radio" name="sigColor" value="red" />
+                    <span>Red</span>
+                </label>
+                <label class="color-label">
+                    <input type="radio" name="sigColor" value="green" />
+                    <span>Green</span>
+                </label>
+                <label class="color-label">
+                    <input type="radio" name="sigColor" value="blue" />
+                    <span>Blue</span>
+                </label>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-1">
+            <label class="toolbar-label" style="margin-left: 0.5rem;">Shape:</label>
+            <select id="shapeTool" class="toolbar-select">
+                <option value="">None</option>
+                <option value="check">✔ Check</option>
+                <option value="cross">✖ Cross</option>
+                <option value="circle">○ Circle</option>
+                <option value="square">□ Square</option>
+            </select>
+        </div>
+
+        <div class="flex items-center gap-1">
+            <label class="toolbar-label" style="margin-left: 0.5rem;">Image:</label>
+            <input type="file" id="imageUpload" accept="image/*" class="toolbar-input"/>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                <button id="btnFinalize" class="toolbar-btn emerald">Finalize & Download</button>
+                <div id="jobStatus" class="text-xs text-gray-500 text-center"></div>
+                <div id="downloadArea" style="margin-top: 0.25rem;"></div>
+            </div>
+        </div>
+    </header>
+
+    <main id="pagesContainer" class="pages-container"></main>
+    <div id="uploadInfo" class="text-center text-xs text-gray-500" style="margin-top: 0.5rem;"></div>
+
+    <!-- Note: The original JavaScript file 'edit.js' is still required for the functionality. -->
+    <script src="/static/js/edit.js"></script>
+
+{% endblock %}
+

@@ -1,0 +1,344 @@
+{% extends "base.html" %}
+{% block title %}Organize PDF - TapToPDF{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/organize_pdf.css') }}">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base_style1.css') }}">
+    <meta name="description" content="Organize your PDF pages online for free. Easily rearrange, rotate, or delete pages in your document with our simple drag-and-drop PDF organizer. No software installation needed.">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TapToPDF">
+<meta property="og:title" content="Organize PDF - TapToPDF">
+<meta property="og:description" content="Organize your PDF pages online for free. Easily rearrange, rotate, or delete pages in your document with our simple drag-and-drop PDF organizer. No software installation needed.">
+<meta property="og:image" content="/static/css/preview.png">
+<meta property="og:image:alt" content="Organize PDF Pages - TapToPDF">
+<meta property="og:url" content="{{ request.url }}">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Organize PDF - TapToPDF">
+<meta name="twitter:description" content="Organize your PDF pages online for free. Easily rearrange, rotate, or delete pages in your document with our simple drag-and-drop PDF organizer. No software installation needed.">
+<meta name="twitter:image" content="/static/css/preview.png">
+<meta name="twitter:image:alt" content="Organize PDF Pages - TapToPDF">
+
+<meta itemprop="name" content="Organize PDF - TapToPDF">
+<meta itemprop="description" content="Organize your PDF pages online for free. Easily rearrange, rotate, or delete pages in your document with our simple drag-and-drop PDF organizer. No software installation needed.">
+<meta itemprop="image" content="/static/css/preview.png">
+
+{% endblock %}
+
+{% block content %}
+<div class="organize-body">
+    <div class="merge-container">
+        <div class="tool-header">
+            <h1><i class="fas fa-grip-vertical"></i> Organize PDF</h1>
+            <p>Rearrange, delete, or rotate pages in your PDF document.</p>
+        </div>
+
+        <div class="upload-section" id="uploadSection">
+            <div class="drop-content">
+                <i class="bi bi-folder-plus"></i>
+                <p>Drag & Drop your PDF file here</p>
+                <span>or click to browse</span>
+            </div>
+            <input type="file" id="pdfFile" accept="application/pdf" hidden />
+        </div>
+
+        <div id="fileStatusArea" class="file-item" style="display:none;">
+            <div class="file-details">
+                <i class="bi bi-file-earmark-pdf-fill folder-icon"></i>
+                <span id="pdfFileName"></span>
+                <span id="pdfFileSize"></span>
+            </div>
+            <div id="statusMessageContainer" class="status-message-container"></div>
+            <div id="statusMsg" class="status-message"></div>
+        </div>
+
+        <div id="previewContainer" class="sortable-preview" style="display:none;"></div>
+
+        <div class="action-buttons">
+            <button id="submitBtn" class="btn btn-convert" disabled style="display:none;">
+                <span class="btn-text">Apply Changes</span>
+                <i class="fas fa-arrow-right"></i>
+            </button>
+            <a id="downloadBtn" class="btn btn-download" href="#" download style="display:none;">
+                <i class="fas fa-download"></i>
+                <span>Download Organized PDF</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js`;
+
+    const input = document.getElementById('pdfFile');
+    const uploadSection = document.getElementById('uploadSection');
+    const fileStatusArea = document.getElementById('fileStatusArea');
+    const fileName = document.getElementById('pdfFileName');
+    const fileSize = document.getElementById('pdfFileSize');
+    const statusMessageContainer = document.getElementById('statusMessageContainer');
+    const statusMsg = document.getElementById('statusMsg');
+    const previewContainer = document.getElementById('previewContainer');
+    const submitBtn = document.getElementById('submitBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    let uploadedFile = null;
+
+    const formatBytes = (bytes) => {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    };
+
+    const truncateFileName = (name) => {
+        const maxChars = 9;
+        const parts = name.split('.');
+        const baseName = parts.slice(0, -1).join('.');
+        const extension = parts.pop();
+        if (baseName.length > maxChars) {
+            return `${baseName.slice(0, maxChars)}...${extension}`;
+        }
+        return name;
+    };
+
+    const updateStatus = (message, statusType = 'normal') => {
+        statusMessageContainer.innerHTML = '';
+        statusMsg.textContent = '';
+        statusMsg.classList.remove('error');
+        
+        if (statusType === 'loading') {
+            const spinnerDiv = document.createElement('div');
+            spinnerDiv.className = 'spinner';
+            const statusSpan = document.createElement('span');
+            statusSpan.className = 'status-text';
+            statusSpan.textContent = message;
+            statusMessageContainer.appendChild(spinnerDiv);
+            statusMessageContainer.appendChild(statusSpan);
+        } else if (statusType === 'success') {
+            const successIcon = document.createElement('i');
+            successIcon.className = 'fas fa-check-circle success-icon';
+            const statusSpan = document.createElement('span');
+            statusSpan.className = 'status-text';
+            statusSpan.textContent = message;
+            statusMessageContainer.appendChild(successIcon);
+            statusMessageContainer.appendChild(statusSpan);
+        } else if (statusType === 'error') {
+            statusMsg.textContent = message;
+            statusMsg.classList.add('error');
+        }
+    };
+
+    // --- Drag and Drop functionality ---
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        uploadSection.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadSection.addEventListener(eventName, () => uploadSection.classList.add('highlight'), false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadSection.addEventListener(eventName, () => uploadSection.classList.remove('highlight'), false);
+    });
+    
+    uploadSection.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        handlePDFUpload(files[0]);
+    }, false);
+
+    // --- Click to upload functionality ---
+    uploadSection.addEventListener('click', () => {
+        input.click();
+    });
+
+    input.addEventListener('change', () => {
+        handlePDFUpload(input.files[0]);
+    });
+
+    // --- Handle PDF Upload & Preview Generation ---
+    async function handlePDFUpload(file) {
+        if (!file || file.type !== 'application/pdf') {
+            updateStatus('Please upload a valid PDF file.', 'error');
+            return;
+        }
+
+        uploadedFile = file;
+        
+        // Show file details and initial status
+        uploadSection.style.display = 'none';
+        fileStatusArea.style.display = 'flex';
+        fileName.textContent = truncateFileName(file.name);
+        fileSize.textContent = formatBytes(file.size);
+
+        // Update status for loading
+        updateStatus('Loading PDF pages...', 'loading');
+        previewContainer.innerHTML = '';
+        
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            const pdfData = new Uint8Array(e.target.result);
+            try {
+                const pdfDoc = await pdfjsLib.getDocument({data: pdfData}).promise;
+                
+                for (let i = 1; i <= pdfDoc.numPages; i++) {
+                    const page = await pdfDoc.getPage(i);
+                    const viewport = page.getViewport({scale: 0.2});
+                    const canvas = document.createElement("canvas");
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+                    const ctx = canvas.getContext("2d");
+                    await page.render({canvasContext: ctx, viewport}).promise;
+
+                    const div = document.createElement("div");
+                    div.className = "page-item";
+                    div.dataset.pageNum = i;
+                    div.dataset.rotation = 0;
+
+                    const numberSpan = document.createElement('span');
+                    numberSpan.className = 'page-number';
+                    numberSpan.textContent = i;
+                    
+                    const controlsDiv = document.createElement('div');
+                    controlsDiv.className = 'page-controls';
+                    
+                    const rotateBtn = document.createElement("button");
+                    rotateBtn.className = "control-btn rotate-btn";
+                    rotateBtn.innerHTML = '<i class="fas fa-redo-alt"></i>';
+                    rotateBtn.title = 'Rotate';
+                    rotateBtn.onclick = () => {
+                        let current = parseInt(div.dataset.rotation) || 0;
+                        current = (current + 90) % 360;
+                        div.dataset.rotation = current;
+                        canvas.style.transform = `rotate(${current}deg)`;
+                    };
+                    
+                    const deleteBtn = document.createElement("button");
+                    deleteBtn.className = "control-btn delete-btn";
+                    deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+                    deleteBtn.title = 'Delete Page';
+                    deleteBtn.onclick = () => {
+                        div.remove();
+                        // Re-evaluate if there are any pages left and update UI
+                        if (previewContainer.children.length === 0) {
+                             // Reset UI to initial state
+                            uploadSection.style.display = 'flex';
+                            fileStatusArea.style.display = 'none';
+                            previewContainer.style.display = 'none';
+                            submitBtn.style.display = 'none';
+                            downloadBtn.style.display = 'none';
+                            updateStatus('All pages removed. Please upload a new PDF.', 'error');
+                        }
+                    };
+
+                    div.appendChild(numberSpan);
+                    div.appendChild(canvas);
+                    controlsDiv.appendChild(rotateBtn);
+                    controlsDiv.appendChild(deleteBtn);
+                    div.appendChild(controlsDiv);
+
+                    previewContainer.appendChild(div);
+                }
+
+                new Sortable(previewContainer, {
+                    animation: 150,
+                });
+                
+                updateStatus('PDF loaded. Drag and drop pages to reorder or click to rotate/delete.', 'success');
+                previewContainer.style.display = 'flex';
+                submitBtn.disabled = false;
+                submitBtn.style.display = 'inline-flex';
+                downloadBtn.style.display = 'none';
+
+            } catch (error) {
+                updateStatus(`Error loading PDF: ${error.message}`, 'error');
+                uploadSection.style.display = 'flex';
+                fileStatusArea.style.display = 'none';
+                previewContainer.style.display = 'none';
+                submitBtn.style.display = 'none';
+                downloadBtn.style.display = 'none';
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    }
+
+    // --- Handle PDF Organization Submission ---
+    submitBtn.addEventListener("click", async () => {
+        if (!uploadedFile) {
+            updateStatus('No PDF loaded!', 'error');
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.style.display = 'none';
+        downloadBtn.style.display = 'none';
+
+        const previewDivs = document.querySelectorAll(".page-item");
+        if (previewDivs.length === 0) {
+            updateStatus('No pages left to organize.', 'error');
+            return;
+        }
+        
+        const order = [];
+        const rotations = {};
+
+        previewDivs.forEach(div => {
+            const num = parseInt(div.dataset.pageNum);
+            const rot = parseInt(div.dataset.rotation) || 0;
+            order.push(num);
+            if (rot !== 0) {
+                rotations[num] = rot;
+            }
+        });
+
+        const formData = new FormData();
+        formData.append('pdf_file', uploadedFile);
+        formData.append('order', order.join(','));
+        formData.append('rotations', JSON.stringify(rotations));
+
+        updateStatus('Applying changes...', 'loading');
+
+        let poll = null;
+        try {
+            const res = await fetch("/api/organize", { method: "POST", body: formData });
+            const data = await res.json();
+            
+            if (!res.ok) throw new Error(data.error || 'Failed to submit job.');
+            
+            const jobId = data.job_id;
+            
+            poll = setInterval(async () => {
+                const statusRes = await fetch(`/api/job/status/${jobId}`);
+                const statusData = await statusRes.json();
+
+                if (statusData.status === 'finished') {
+                    clearInterval(poll);
+                    updateStatus('Organized PDF is ready!', 'success');
+                    downloadBtn.href = `/api/job/download/${statusData.result}`;
+                    downloadBtn.style.display = 'inline-flex';
+                    submitBtn.style.display = 'none';
+                } else if (statusData.status === 'failed') {
+                    clearInterval(poll);
+                    throw new Error('Organization failed: ' + (statusData.result || 'An unknown error occurred.'));
+                }
+            }, 1500);
+
+        } catch (err) {
+            if (poll) clearInterval(poll);
+            updateStatus(err.message, 'error');
+            submitBtn.style.display = 'inline-flex';
+            submitBtn.disabled = false;
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,391 @@
+{% extends "base.html" %}
+
+{% block title %}Rotate PDF Pages - TapToPDF{% endblock %}
+
+{% block head %}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Easily rotate and reorder pages in your PDF documents. Our free online tool lets you quickly fix portrait and landscape orientations to get your file just right.">
+<link rel="canonical" href="https://www.taptopdf.com/rotate-pdf">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base_style1.css') }}">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/rotate.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TapToPDF">
+<meta property="og:title" content="Rotate PDF Pages - TapToPDF">
+<meta property="og:description" content="Easily rotate and reorder pages in your PDF documents. Our free online tool lets you quickly fix portrait and landscape orientations to get your file just right.">
+<meta property="og:image" content="/static/css/preview.png">
+<meta property="og:image:alt" content="Rotate and Reorder PDF Pages Online - TapToPDF">
+<meta property="og:url" content="{{ request.url }}">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Rotate PDF Pages - TapToPDF">
+<meta name="twitter:description" content="Easily rotate and reorder pages in your PDF documents. Our free online tool lets you quickly fix portrait and landscape orientations to get your file just right.">
+<meta name="twitter:image" content="/static/css/preview.png">
+<meta name="twitter:image:alt" content="Rotate and Reorder PDF Pages Online - TapToPDF">
+
+<meta itemprop="name" content="Rotate PDF Pages - TapToPDF">
+<meta itemprop="description" content="Easily rotate and reorder pages in your PDF documents. Our free online tool lets you quickly fix portrait and landscape orientations to get your file just right.">
+<meta itemprop="image" content="/static/css/preview.png">
+{% endblock %}
+
+{% block content %}
+<div class="pdfword-body">
+    <div class="merge-container">
+        <div class="tool-header">
+            <h1><i class="bi bi-arrow-clockwise"></i> Rotate PDF Pages</h1>
+            <p>Rotate pages in your PDF for correct orientation.</p>
+        </div>
+
+        <div id="drop-area" class="upload-section">
+            <div class="drop-content">
+                <i class="bi bi-folder-plus"></i>
+                <p>Drag and drop your PDF file here</p>
+                <span>It's fast, easy, and free.</span>
+            </div>
+        </div>
+        <input type="file" id="fileInput" class="hidden" accept="application/pdf">
+
+        <div id="loading-spinner-preview" class="spinner hidden"></div>
+        <p id="status-message-preview" class="hidden">Your file is loading...</p>
+
+        <div id="preview-container" class="file-list hidden"></div>
+
+        <div id="loading-spinner-rotate" class="spinner hidden"></div>
+        <p id="status-message-rotate" class="hidden">Processing your file for download...</p>
+
+        <div id="fixed-controls" class="action-buttons hidden">
+            <div id="control-bar" class="flex-center-row">
+                <button class="btn btn-convert" onclick="rotateAll('left')">Rotate All Left</button>
+                <button class="btn btn-convert" onclick="rotateAll('right')">Rotate All Right</button>
+                <button class="btn btn-download" id="submit-button">Submit Rotated PDF</button>
+            </div>
+            <button id="fab-button" class="btn hidden">⚙️</button>
+        </div>
+        
+        <div id="sidebar" class="sidebar hidden">
+            <span class="close-btn" onclick="closeSidebar()">&times;</span>
+            <h3>Controls</h3>
+            <button class="btn btn-convert" onclick="rotateAll('left')">Rotate All Left</button>
+            <button class="btn btn-convert" onclick="rotateAll('right')">Rotate All Right</button>
+            <button class="btn btn-download" id="submit-button-sidebar">Submit Rotated PDF</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
+
+<script>
+    let rotations = {};
+    let previews = [];
+    let fileBlob = null;
+    const previewContainer = document.getElementById('preview-container');
+    const dropArea = document.getElementById('drop-area');
+    const fileInput = document.getElementById('fileInput');
+    const fixedControls = document.getElementById('fixed-controls');
+    const controlBar = document.getElementById('control-bar');
+    const fabButton = document.getElementById('fab-button');
+    const sidebar = document.getElementById('sidebar');
+    const submitButton = document.getElementById('submit-button');
+    const submitButtonSidebar = document.getElementById('submit-button-sidebar');
+    const previewSpinner = document.getElementById('loading-spinner-preview');
+    const previewStatus = document.getElementById('status-message-preview');
+    const rotateSpinner = document.getElementById('loading-spinner-rotate');
+    const rotateStatus = document.getElementById('status-message-rotate');
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, preventDefaults, false);
+    });
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, highlight, false);
+    });
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, unhighlight, false);
+    });
+
+    dropArea.addEventListener('drop', handleDrop, false);
+
+    dropArea.addEventListener('click', () => {
+        console.log("Drop area clicked, launching file input.");
+        fileInput.click();
+    }, false);
+
+    fileInput.addEventListener('change', handleFiles, false);
+    submitButton.addEventListener('click', submitForRotation);
+    submitButtonSidebar.addEventListener('click', () => {
+        closeSidebar();
+        submitForRotation();
+    });
+    fabButton.addEventListener('click', openSidebar);
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    function highlight() {
+        dropArea.classList.add('highlight');
+    }
+    function unhighlight() {
+        dropArea.classList.remove('highlight');
+    }
+    function handleDrop(e) {
+        let dt = e.dataTransfer;
+        let files = dt.files;
+        handleFile(files[0]);
+    }
+    function handleFiles() {
+        handleFile(this.files[0]);
+    }
+
+    async function handleFile(file) {
+        if (!file || file.type !== 'application/pdf') {
+            alert('Please select a PDF file.');
+            return;
+        }
+        fileBlob = file;
+        dropArea.classList.add('hidden');
+        previewSpinner.classList.remove('hidden');
+        previewStatus.classList.remove('hidden');
+        const formData = new FormData();
+        formData.append('pdf_file', file);
+
+        try {
+            const res = await fetch('/api/remove/previews', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            if (!data.job_id) {
+                alert('Preview generation failed.');
+                resetUI();
+                return;
+            }
+            pollPreviews(data.job_id);
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while uploading the file.');
+            resetUI();
+        }
+    }
+
+    async function pollPreviews(jobId) {
+        const interval = setInterval(async () => {
+            const res = await fetch(`/api/job/status/${jobId}`);
+            const data = await res.json();
+            if (data.status === 'finished' && Array.isArray(data.result)) {
+                clearInterval(interval);
+                previewSpinner.classList.add('hidden');
+                previewStatus.classList.add('hidden');
+                renderPreviews(data.result);
+                fixedControls.classList.remove('hidden');
+            } else if (data.status === 'failed') {
+                clearInterval(interval);
+                alert('Preview generation failed.');
+                resetUI();
+            }
+        }, 2000);
+    }
+    function renderPreviews(previewFiles) {
+        const filenames = previewFiles.map(f => f.filename);
+        previews = filenames;
+        previewContainer.innerHTML = '';
+        rotations = {};
+        filenames.forEach((filename, index) => {
+            rotations[index] = 0;
+            const wrapper = document.createElement('div');
+            wrapper.className = 'page-preview';
+            wrapper.setAttribute('data-index', index);
+            wrapper.setAttribute('data-filename', filename);
+            
+            const pageNumberLabel = document.createElement('span');
+            pageNumberLabel.className = 'page-number-label';
+            pageNumberLabel.textContent = index + 1;
+
+            const img = document.createElement('img');
+            img.src = `/static/previews/${filename}?t=${Date.now()}`;
+            img.id = `page-img-${index}`;
+            img.dataset.index = index;
+            
+            const dragHandle = document.createElement('span');
+            dragHandle.className = 'drag-handle';
+            dragHandle.textContent = `Page ${index + 1}`;
+            
+            // This is the updated section that adds the rotate and delete buttons.
+            const rotateBtn = document.createElement('button');
+            rotateBtn.type = 'button';
+            rotateBtn.className = 'btn btn-rotate';
+            rotateBtn.innerHTML = '<i class="bi bi-arrow-clockwise"></i>';
+            rotateBtn.onclick = () => rotatePage(index, 'right');
+
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'remove-btn';
+            removeBtn.innerHTML = '✖';
+            removeBtn.onclick = () => removePage(index);
+
+            wrapper.appendChild(removeBtn);
+            wrapper.appendChild(rotateBtn);
+            wrapper.appendChild(pageNumberLabel);
+            wrapper.appendChild(img);
+            wrapper.appendChild(dragHandle);
+            previewContainer.appendChild(wrapper);
+        });
+        
+        previewContainer.classList.remove('hidden');
+        makeSortable();
+    }
+
+
+    function rotatePage(index, direction) {
+        let angle = rotations[index] || 0;
+        angle += (direction === 'left' ? -90 : 90);
+        rotations[index] = (angle + 360) % 360;
+        const img = document.getElementById(`page-img-${index}`);
+        if (img) img.style.transform = `rotate(${rotations[index]}deg)`;
+    }
+    function rotateAll(direction) {
+        document.querySelectorAll('.page-preview').forEach(el => {
+            const index = parseInt(el.getAttribute('data-index'));
+            rotatePage(index, direction);
+        });
+    }
+    function removePage(index) {
+        document.querySelectorAll('.page-preview').forEach(el => {
+            const elIndex = parseInt(el.getAttribute('data-index'));
+            if (elIndex === index) {
+                el.remove();
+            }
+        });
+        updatePreviewOrder();
+        if (previews.length === 0) {
+            resetUI();
+        }
+    }
+    function makeSortable() {
+        Sortable.create(previewContainer, {
+            animation: 150,
+            onEnd: function () {
+                updatePreviewOrder();
+            }
+        });
+    }
+    function updatePreviewOrder() {
+        previews = Array.from(document.querySelectorAll('.page-preview')).map(el => {
+            return el.getAttribute('data-filename');
+        });
+    }
+
+    async function submitForRotation() {
+        if (!fileBlob) return;
+        fixedControls.classList.add('hidden');
+        previewContainer.classList.add('hidden');
+        rotateSpinner.classList.remove('hidden');
+        rotateStatus.classList.remove('hidden');
+        const order = Array.from(document.querySelectorAll('.page-preview')).map(el => {
+            return parseInt(el.getAttribute('data-index'));
+        });
+        const formData = new FormData();
+        formData.append('pdf_file', fileBlob);
+        formData.append('rotations', JSON.stringify(rotations));
+        formData.append('order', order.join(','));
+        try {
+            const res = await fetch('/api/rotate', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            if (!data.job_id) {
+                alert('Rotation job failed.');
+                resetUI();
+                return;
+            }
+            pollDownload(data.job_id);
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred during rotation.');
+            resetUI();
+        }
+    }
+    async function pollDownload(jobId) {
+        const interval = setInterval(async () => {
+            const res = await fetch(`/api/job/status/${jobId}`);
+            const data = await res.json();
+            if (data.status === 'finished' && data.result) {
+                clearInterval(interval);
+                rotateSpinner.classList.add('hidden');
+                rotateStatus.classList.add('hidden');
+                
+                const downloadSection = document.getElementById('download-section') || document.createElement('div');
+                downloadSection.id = 'download-section';
+                downloadSection.className = 'action-buttons';
+                downloadSection.innerHTML = `
+                    <a id="download-link" href="/api/job/download/${data.result}" class="btn btn-download" target="_blank" rel="noopener noreferrer">
+                        <i class="fas fa-download"></i> Download Rotated PDF
+                    </a>
+                    <button class="btn btn-convert" onclick="resetForNewFile()">Start Over</button>
+                `;
+                document.querySelector('.merge-container').appendChild(downloadSection);
+                
+            } else if (data.status === 'failed') {
+                clearInterval(interval);
+                alert('Rotate job failed.');
+                resetForNewFile();
+            }
+        }, 2000);
+    }
+    
+    function resetForNewFile() {
+        dropArea.classList.remove('hidden');
+        previewContainer.classList.add('hidden');
+        previewContainer.innerHTML = '';
+        fixedControls.classList.add('hidden');
+        previewSpinner.classList.add('hidden');
+        previewStatus.classList.add('hidden');
+        rotateSpinner.classList.add('hidden');
+        rotateStatus.classList.add('hidden');
+        const downloadSection = document.getElementById('download-section');
+        if (downloadSection) {
+            downloadSection.remove();
+        }
+    }
+
+    function resetUI() {
+        dropArea.classList.remove('hidden');
+        previewContainer.classList.add('hidden');
+        previewContainer.innerHTML = '';
+        fixedControls.classList.add('hidden');
+        previewSpinner.classList.add('hidden');
+        previewStatus.classList.add('hidden');
+        rotateSpinner.classList.add('hidden');
+        rotateStatus.classList.add('hidden');
+        const downloadSection = document.getElementById('download-section');
+        if (downloadSection) {
+            downloadSection.remove();
+        }
+    }
+    function openSidebar() {
+        sidebar.classList.add('open');
+    }
+    function closeSidebar() {
+        sidebar.classList.remove('open');
+    }
+    const mediaQuery = window.matchMedia('(max-width: 768px)');
+    function handleScreenSizeChange(e) {
+        if (e.matches) {
+            controlBar.classList.add('hidden');
+            fabButton.classList.remove('hidden');
+        } else {
+            controlBar.classList.remove('hidden');
+            fabButton.classList.add('hidden');
+            closeSidebar();
+        }
+    }
+    handleScreenSizeChange(mediaQuery);
+    mediaQuery.addEventListener('change', handleScreenSizeChange);
+</script>
+
+{% endblock %}

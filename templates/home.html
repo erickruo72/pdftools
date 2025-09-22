@@ -1,0 +1,324 @@
+{% extends "base.html" %}
+{% block title %}TapToPDF - Free Online PDF Tools{% endblock %}
+{% block head %}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TapToPDF - Free Online PDF Tools</title>
+<meta name="description" content="TapToPDF is your free online toolkit for all PDF tasks. Merge, split, compress, convert, and edit PDFs quickly and securely—no installation or signup required.">
+<link rel="canonical" href="https://taptopdf.com/">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TapToPDF">
+<meta property="og:title" content="TapToPDF - Free Online PDF Tools">
+<meta property="og:description" content="TapToPDF is your free online toolkit for all PDF tasks. Merge, split, compress, convert, and edit PDFs quickly and securely—no installation or signup required.">
+<meta property="og:image" content="{{ url_for('static', filename='css/preview.png', _external=True) }}">
+<meta property="og:image:alt" content="TapToPDF - Free Online PDF Tools">
+<meta property="og:url" content="{{ request.url }}">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="TapToPDF - Free Online PDF Tools">
+<meta name="twitter:description" content="TapToPDF is your free online toolkit for all PDF tasks. Merge, split, compress, convert, and edit PDFs quickly and securely—no installation or signup required.">
+<meta name="twitter:image" content="{{ url_for('static', filename='css/preview.png', _external=True) }}">
+<meta name="twitter:image:alt" content="TapToPDF - Free Online PDF Tools">
+
+<meta itemprop="name" content="TapToPDF - Free Online PDF Tools">
+<meta itemprop="description" content="TapToPDF is your free online toolkit for all PDF tasks. Merge, split, compress, convert, and edit PDFs quickly and securely—no installation or signup required.">
+<meta itemprop="image" content="{{ url_for('static', filename='css/preview.png', _external=True) }}">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color:#EEF6FE; /
+        }
+        .tool-card {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .tool-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+        }
+        .cta-gradient-bg {
+            background: #4c1d95;}
+        .tool-card {
+            margin-right: 8px;
+        }
+
+a {
+    text-decoration: none;
+}
+    </style>
+</head>
+
+{% endblock %}
+
+{% block content %}
+<body class="text-gray-800">
+
+    <main class="container">
+        
+        <section id="hero" class="d-flex flex-column flex-md-row align-items-center justify-content-between py-5 py-md-5">
+            <div class="col-md-6 text-center text-md-start">
+                <h1 class="display-4 fw-bold text-gray-900 leading-tight mb-4">
+                Your Documents,<br>Simplified.
+                </h1>
+                <p class="fs-5 text-gray-600 mb-4">
+                Effortlessly convert, edit, and manage your PDFs with our all-in-one suite of secure and powerful tools.
+
+                </p>
+                <a href="#tools-section" class="btn btn-primary fw-semibold py-3 px-5 rounded-pill shadow-lg">
+                    Explore Our Tools
+                </a>
+            </div>
+            
+            <div class="col-md-6 d-flex justify-content-center justify-content-md-end mb-4 mb-md-0">
+                <img src="static/herosection.png" alt="Taptopdf homepage" class="img-fluid mw-100">
+            </div>
+        </section>
+
+
+        <section id="how-it-works" class="py-5 py-md-5 text-center">
+            <div class="mb-4">
+                <h2 class="display-5 fw-bolder text-gray-900 mb-4">
+                    Your Process, Streamlined
+                </h2>
+                <p class="fs-5 text-gray-600 col-lg-8 mx-auto">
+                    Editing your PDF is as easy as 1, 2, 3. No complex steps, just fast results.
+                </p>
+            </div>
+            
+            <div class="d-flex flex-column flex-md-row align-items-center justify-content-center gap-5 col-lg-10 mx-auto">
+                
+                <div class="col-md-6 d-flex flex-column gap-4 text-start">
+                    <div class="d-flex align-items-start gap-3 p-4 bg-white rounded-4 shadow-sm">
+                        <div class="flex-shrink-0 bg-blue-100 text-blue-600 rounded-circle p-3 d-flex align-items-center justify-content-center fw-bold fs-4">
+                            1
+                        </div>
+                        <div>
+                            <h3 class="fs-4 fw-bold mb-1">Upload File</h3>
+                            <p class="text-gray-600">Drag & drop your PDF, or choose from your drive.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start gap-3 p-4 bg-white rounded-4 shadow-sm">
+                        <div class="flex-shrink-0 bg-blue-100 text-blue-600 rounded-circle p-3 d-flex align-items-center justify-content-center fw-bold fs-4">
+                            2
+                        </div>
+                        <div>
+                            <h3 class="fs-4 fw-bold mb-1">Pick a Tool</h3>
+                            <p class="text-gray-600">Select the best tool for your task from our wide range.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start gap-3 p-4 bg-white rounded-4 shadow-sm">
+                        <div class="flex-shrink-0 bg-blue-100 text-blue-600 rounded-circle p-3 d-flex align-items-center justify-content-center fw-bold fs-4">
+                            3
+                        </div>
+                        <div>
+                            <h3 class="fs-4 fw-bold mb-1">Download & Go</h3>
+                            <p class="text-gray-600">Your new PDF is ready to download instantly. It's that simple.</p>
+                        </div>
+                    </div>
+                </div>
+                         <div class="col-md-6 d-flex justify-content-center mb-4 mb-md-0">
+                    <img src="static/howitworks.png" alt="User interface snapshot" class="img-fluid rounded-4 shadow">
+                </div>
+            </div>
+        </section>
+
+
+        
+        <section id="tools-section" class="py-5 py-md-5 text-center">
+            <div class="mb-4">
+                <h2 class="display-5 fw-bolder text-gray-900 mb-4">
+                    Explore Our PDF Tool Suite
+                </h2>
+                <p class="fs-5 text-gray-600 col-lg-8 mx-auto">
+                    We offer a complete collection of tools to handle any PDF task with ease and precision.
+                </p>
+            </div>
+            <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-5 justify-content-center">
+                <a href="/merge-pdf" class="col text-decoration-none tool-card bg-white p-4 rounded-4 text-center">
+                    <div class="fs-3 text-primary mb-3"><i class="bi bi-files"></i></div>
+                    <h3 class="fw-bold fs-5 text-primary mb-1">Merge PDF</h3>
+                    <p class="fs-6 text-secondary">Combine multiple PDF files into one document.</p>
+                </a>
+                <a href="/split-pdf" class="col text-decoration-none tool-card bg-white p-4 rounded-4 text-center">
+                    <div class="fs-3 text-primary mb-3"><i class="bi bi-scissors"></i></div>
+                    <h3 class="fw-bold fs-5 text-primary mb-1">Split PDF</h3>
+                    <p class="fs-6 text-secondary">Extract specific pages or page ranges.</p>
+                </a>
+                <a href="/remove-pages" class="col text-decoration-none tool-card bg-white p-4 rounded-4 text-center">
+                    <div class="fs-3 text-primary mb-3"><i class="bi bi-x-lg"></i></div>
+                    <h3 class="fw-bold fs-5 text-primary mb-1">Remove Pages</h3>
+                    <p class="fs-6 text-secondary">Delete unwanted pages from your PDF.</p>
+                </a>
+                <a href="/extract-pages" class="col text-decoration-none tool-card bg-white p-4 rounded-4 text-center">
+                    <div class="fs-3 text-primary mb-3"><i class="bi bi-box-arrow-down"></i></div>
+                    <h3 class="fw-bold fs-5 text-primary mb-1">Extract Pages</h3>
+                    <p class="fs-6 text-secondary">Save selected pages as a new file.</p>
+                </a>
+                <a href="/organize-pdf" class="col text-decoration-none tool-card bg-white p-4 rounded-4 text-center">
+                    <div class="fs-3 text-primary mb-3"><i class="bi bi-layout-text-window-reverse"></i></div>
+                    <h3 class="fw-bold fs-5 text-primary mb-1">Organize PDF</h3>
+                    <p class="fs-6 text-secondary">Rearrange, delete, or rotate pages.</p>
+                </a>
+                <a href="/scan-to-pdf" class="col text-decoration-none tool-card bg-white p-4 rounded-4 text-center">
+                    <div class="fs-3 text-primary mb-3"><i class="bi bi-camera"></i></div>
+                    <h3 class="fw-bold fs-5 text-primary mb-1">Scan to PDF</h3>
+                    <p class="fs-6 text-secondary">Convert images from your scanner or camera to PDF.</p>
+                </a>
+                <a href="/compress-pdf" class="col text-decoration-none tool-card bg-white p-4 rounded-4 text-center">
+                    <div class="fs-3 text-primary mb-3"><i class="bi bi-arrow-down-circle"></i></div>
+                    <h3 class="fw-bold fs-5 text-primary mb-1">Compress PDF</h3>
+                    <p class="fs-6 text-secondary">Reduce file size while maintaining quality.</p>
+                </a>
+                <a href="/repair-pdf" class="col text-decoration-none tool-card bg-white p-4 rounded-4 text-center">
+                    <div class="fs-3 text-primary mb-3"><i class="bi bi-tools"></i></div>
+                    <h3 class="fw-bold fs-5 text-primary mb-1">Repair PDF</h3>
+                    <p class="fs-6 text-secondary">Fix corrupted PDF files and restore them.</p>
+                </a>
+                <a href="/ocr-pdf" class="col text-decoration-none tool-card bg-white p-4 rounded-4 text-center">
+                    <div class="fs-3 text-primary mb-3"><i class="bi bi-eye"></i></div>
+                    <h3 class="fw-bold fs-5 text-primary mb-1">OCR PDF</h3>
+                    <p class="fs-6 text-secondary">Convert scanned PDFs into editable text.</p>
+                </a>
+                <a href="/jpg-to-pdf" class="col text-decoration-none tool-card bg-white p-4 rounded-4 text-center">
+                    <div class="fs-3 text-primary mb-3"><i class="bi bi-file-image"></i></div>
+                    <h3 class="fw-bold fs-5 text-primary mb-1">JPG to PDF</h3>
+                    <p class="fs-6 text-secondary">Combine images (JPG, PNG) into a single PDF.</p>
+                </a>
+                <a href="/word-to-pdf" class="col text-decoration-none tool-card bg-white p-4 rounded-4 text-center">
+                    <div class="fs-3 text-primary mb-3"><i class="bi bi-file-word"></i></div>
+                    <h3 class="fw-bold fs-5 text-primary mb-1">WORD to PDF</h3>
+                    <p class="fs-6 text-secondary">Convert your Word document (.docx) to PDF.</p>
+                </a>
+                <a href="/ppt-to-pdf" class="col text-decoration-none tool-card bg-white p-4 rounded-4 text-center">
+                    <div class="fs-3 text-primary mb-3"><i class="bi bi-file-earmark-slides"></i></div>
+                    <h3 class="fw-bold fs-5 text-primary mb-1">PPT to PDF</h3>
+                    <p class="fs-6 text-secondary">Convert your PowerPoint (.pptx) to PDF.</p>
+                </a>
+                <a href="/excel-to-pdf" class="col text-decoration-none tool-card bg-white p-4 rounded-4 text-center">
+                    <div class="fs-3 text-primary mb-3"><i class="bi bi-file-excel"></i></div>
+                    <h3 class="fw-bold fs-5 text-primary mb-1">EXCEL to PDF</h3>
+                    <p class="fs-6 text-secondary">Convert PDF tables into an Excel spreadsheet.</p>
+                </a>
+                <a href="/html-to-pdf" class="col text-decoration-none tool-card bg-white p-4 rounded-4 text-center">
+                    <div class="fs-3 text-primary mb-3"><i class="bi bi-code-slash"></i></div>
+                    <h3 class="fw-bold fs-5 text-primary mb-1">HTML to PDF</h3>
+                    <p class="fs-6 text-secondary">Convert websites and HTML files to PDFs.</p>
+                </a>
+                <a href="/pdf-to-jpg" class="col text-decoration-none tool-card bg-white p-4 rounded-4 text-center">
+                    <div class="fs-3 text-primary mb-3"><i class="bi bi-file-image"></i></div>
+                    <h3 class="fw-bold fs-5 text-primary mb-1">PDF to JPG</h3>
+                    <p class="fs-6 text-secondary">Convert your PDF to a zip of images (PNG or JPG).</p>
+                </a>
+                <a href="/pdf-to-word" class="col text-decoration-none tool-card bg-white p-4 rounded-4 text-center">
+                    <div class="fs-3 text-primary mb-3"><i class="bi bi-file-word"></i></div>
+                    <h3 class="fw-bold fs-5 text-primary mb-1">PDF to WORD</h3>
+                    <p class="fs-6 text-secondary">Convert your PDF into an editable Word document.</p>
+                </a>
+                <a href="/pdf-to-ppt" class="col text-decoration-none tool-card bg-white p-4 rounded-4 text-center">
+                    <div class="fs-3 text-primary mb-3"><i class="bi bi-file-earmark-slides"></i></div>
+                    <h3 class="fw-bold fs-5 text-primary mb-1">PDF to PPT</h3>
+                    <p class="fs-6 text-secondary">Convert your PDF into a PowerPoint presentation.</p>
+                </a>
+                <a href="/pdf-to-excel" class="col text-decoration-none tool-card bg-white p-4 rounded-4 text-center">
+                    <div class="fs-3 text-primary mb-3"><i class="bi bi-file-excel"></i></div>
+                    <h3 class="fw-bold fs-5 text-primary mb-1">EXCEL to PDF</h3>
+                    <p class="fs-6 text-secondary">Convert PDF tables into an Excel spreadsheet.</p>
+                </a>
+                <a href="/pdf-to-pdf-a" class="col text-decoration-none tool-card bg-white p-4 rounded-4 text-center">
+                    <div class="fs-3 text-primary mb-3"><i class="bi bi-file-earmark-text"></i></div>
+                    <h3 class="fw-bold fs-5 text-primary mb-1">PDF to PDF/A</h3>
+                    <p class="fs-6 text-secondary">Convert your PDF to an archive format.</p>
+                </a>
+                <a href="/rotate-pdf" class="col text-decoration-none tool-card bg-white p-4 rounded-4 text-center">
+                    <div class="fs-3 text-primary mb-3"><i class="bi bi-arrow-clockwise"></i></div>
+                    <h3 class="fw-bold fs-5 text-primary mb-1">Rotate PDF</h3>
+                    <p class="fs-6 text-secondary">Rotate pages for correct orientation.</p>
+                </a>
+                <a href="/add-page-numbers" class="col text-decoration-none tool-card bg-white p-4 rounded-4 text-center">
+                    <div class="fs-3 text-primary mb-3"><i class="bi bi-123"></i></div>
+                    <h3 class="fw-bold fs-5 text-primary mb-1">Add Page Numbers</h3>
+                    <p class="fs-6 text-secondary">Easily add page numbers to your PDFs.</p>
+                </a>
+                <a href="/add-watermark" class="col text-decoration-none tool-card bg-white p-4 rounded-4 text-center">
+                    <div class="fs-3 text-primary mb-3"><i class="bi bi-droplet"></i></div>
+                    <h3 class="fw-bold fs-5 text-primary mb-1">Add Watermark</h3>
+                    <p class="fs-6 text-secondary">Add a custom watermark to your PDFs.</p>
+                </a>
+                <a href="/unlock-pdf" class="col text-decoration-none tool-card bg-white p-4 rounded-4 text-center">
+                    <div class="fs-3 text-primary mb-3"><i class="bi bi-unlock"></i></div>
+                    <h3 class="fw-bold fs-5 text-primary mb-1">Unlock PDF</h3>
+                    <p class="fs-6 text-secondary">Remove passwords and restrictions.</p>
+                </a>
+                <a href="/protect-pdf" class="col text-decoration-none tool-card bg-white p-4 rounded-4 text-center">
+                    <div class="fs-3 text-primary mb-3"><i class="bi bi-shield-lock"></i></div>
+                    <h3 class="fw-bold fs-5 text-primary mb-1">Protect PDF</h3>
+                    <p class="fs-6 text-secondary">Add a password to secure your documents.</p>
+                </a>
+                <a href="/sign-pdf" class="col text-decoration-none tool-card bg-white p-4 rounded-4 text-center">
+                    <div class="fs-3 text-primary mb-3"><i class="bi bi-pen"></i></div>
+                    <h3 class="fw-bold fs-5 text-primary mb-1">Sign PDF</h3>
+                    <p class="fs-6 text-secondary">Create and add your digital signature to PDFs.</p>
+                </a>
+                <a href="/redact-pdf" class="col text-decoration-none tool-card bg-white p-4 rounded-4 text-center">
+                    <div class="fs-3 text-primary mb-3"><i class="bi bi-eye-slash"></i></div>
+                    <h3 class="fw-bold fs-5 text-primary mb-1">Redact PDF</h3>
+                    <p class="fs-6 text-secondary">Permanently remove sensitive information.</p>
+                </a>
+            </div>
+        </section>
+
+        
+        <section id="why-choose-us" class="py-5 py-md-5 text-center">
+            <div class="mb-5">
+                <h2 class="display-5 fw-bolder text-gray-900 mb-4">
+                    Why Choose TapToPDF?
+                </h2>
+                <p class="fs-5 text-gray-600 col-lg-8 mx-auto">
+                    We've built a platform that is not only powerful and comprehensive but also puts your needs first.
+                </p>
+            </div>
+            
+            <div class="row g-4 justify-content-center">
+                <div class="col-12 col-md-4">
+                    <div class="p-5 border rounded-4 bg-white shadow-sm">
+                        <div class="fs-1 text-primary mb-3"><i class="bi bi-lock"></i></div>
+                        <h3 class="fw-bold fs-4 mb-2">Security First</h3>
+                        <p class="text-gray-600">
+                            Your files are protected with end-to-end encryption and are automatically deleted after a short period.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="p-5 border rounded-4 bg-white shadow-sm">
+                        <div class="fs-1 text-primary mb-3"><i class="bi bi-lightning-charge"></i></div>
+                        <h3 class="fw-bold fs-4 mb-2">Blazing Fast</h3>
+                        <p class="text-gray-600">
+                            Our cloud-based tools process your documents instantly, so you can get back to what matters.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="p-5 border rounded-4 bg-white shadow-sm">
+                        <div class="fs-1 text-primary mb-3"><i class="bi bi-person-check"></i></div>
+                        <h3 class="fw-bold fs-4 mb-2">No Sign-up Needed</h3>
+                        <p class="text-gray-600">
+                            Access all our tools without any registration or hidden fees. Just upload and go.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+{% endblock %}

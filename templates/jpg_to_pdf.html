@@ -1,0 +1,281 @@
+{% extends "base.html" %}
+{% block title %}Images to PDF - TapToPDF{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/imagetopdf.css') }}">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base_style1.css') }}">
+
+    <meta name="description" content="Convert your images to a single PDF document for free. Combine multiple JPG, PNG, and other image files into one PDF online without any software installation.">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TapToPDF">
+<meta property="og:title" content="Images to PDF - TapToPDF">
+<meta property="og:description" content="Convert your images to a single PDF document for free. Combine multiple JPG, PNG, and other image files into one PDF online without any software installation.">
+<meta property="og:image" content="/static/css/preview.png">
+<meta property="og:image:alt" content="Images to PDF Converter - TapToPDF">
+<meta property="og:url" content="{{ request.url }}">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Images to PDF - TapToPDF">
+<meta name="twitter:description" content="Convert your images to a single PDF document for free. Combine multiple JPG, PNG, and other image files into one PDF online without any software installation.">
+<meta name="twitter:image" content="/static/css/preview.png">
+<meta name="twitter:image:alt" content="Images to PDF Converter - TapToPDF">
+
+<meta itemprop="name" content="Images to PDF - TapToPDF">
+<meta itemprop="description" content="Convert your images to a single PDF document for free. Combine multiple JPG, PNG, and other image files into one PDF online without any software installation.">
+<meta itemprop="image" content="/static/css/preview.png">
+{% endblock %}
+
+{% block content %}
+<div class="imagetopdf-body">
+    <div class="merge-container">
+        <div class="tool-header">
+            <h1><i class="fas fa-file-image"></i> Convert Images to PDF</h1>
+            <p>Combine multiple images (JPG, PNG, WEBP, GIF) into a single PDF document.</p>
+        </div>
+
+        <div class="upload-section" id="uploadSection">
+            <div class="drop-content">
+                <i class="bi bi-folder-plus"></i>
+                <p>Drag & Drop your images here</p>
+                <span>or click to browse</span>
+            </div>
+            <!-- Restrict file input to images only -->
+            <input type="file" id="imageInput" accept="image/png, image/jpeg, image/jpg, image/webp, image/gif" multiple hidden />
+        </div>
+
+        <div class="options-and-preview">
+            <div class="options">
+                <span>Page Orientation:</span>
+                <div class="radio-group">
+                    <input type="radio" id="portrait" name="orientation" value="P" checked />
+                    <label for="portrait">Portrait</label>
+                    <input type="radio" id="landscape" name="orientation" value="L" />
+                    <label for="landscape">Landscape</label>
+                </div>
+            </div>
+            
+            <div id="previewContainer" class="sortable-preview"></div>
+        </div>
+
+        <div class="action-buttons">
+            <button id="convertBtn" class="btn btn-convert" disabled>
+                <span class="btn-text">Convert to PDF</span>
+                                <i class="fas fa-arrow-right"></i>
+            </button>
+            <a id="downloadBtn" class="btn btn-download" href="#" download style="display:none;">
+                <i class="fas fa-download"></i>
+                <span>Download PDF</span>
+            </a>
+        </div>
+
+        <div id="statusMsg" class="status-message"></div>
+    </div>
+</div>
+
+<script>
+    const input = document.getElementById('imageInput');
+    const uploadSection = document.getElementById('uploadSection');
+    const previewContainer = document.getElementById('previewContainer');
+    const convertBtn = document.getElementById('convertBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const statusDiv = document.getElementById('statusMsg');
+
+    let images = [];
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/gif'];
+
+    const generateUID = () => crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 10);
+
+    const updateStatus = (message, statusType = 'normal') => {
+        statusDiv.innerHTML = '';
+        statusDiv.classList.remove('error');
+        
+        if (statusType === 'loading') {
+            const spinnerDiv = document.createElement('div');
+            spinnerDiv.className = 'spinner';
+            const statusSpan = document.createElement('span');
+            statusSpan.className = 'status-text';
+            statusSpan.textContent = message;
+            statusDiv.appendChild(spinnerDiv);
+            statusDiv.appendChild(statusSpan);
+        } else if (statusType === 'success') {
+            const successIcon = document.createElement('i');
+            successIcon.className = 'fas fa-check-circle success-icon';
+            const statusSpan = document.createElement('span');
+            statusSpan.className = 'status-text';
+            statusSpan.textContent = message;
+            statusDiv.appendChild(successIcon);
+            statusDiv.appendChild(statusSpan);
+        } else if (statusType === 'error') {
+            statusDiv.textContent = message;
+            statusDiv.classList.add('error');
+        } else {
+            statusDiv.textContent = message;
+        }
+    };
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        uploadSection.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadSection.addEventListener(eventName, () => uploadSection.classList.add('highlight'), false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadSection.addEventListener(eventName, () => uploadSection.classList.remove('highlight'), false);
+    });
+    
+    uploadSection.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        handleFiles(files);
+    }, false);
+
+    uploadSection.addEventListener('click', () => {
+        input.click();
+    });
+
+    input.addEventListener('change', () => {
+        handleFiles(input.files);
+    });
+    
+    const handleFiles = (files) => {
+        if (files.length === 0) return;
+        
+        previewContainer.innerHTML = '';
+        images = [];
+        
+        [...files].forEach(file => {
+            if (!allowedTypes.includes(file.type)) {
+                updateStatus(`Invalid file: ${file.name}. Please upload images only (PNG, JPG, WEBP, GIF).`, 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = e => {
+                const uid = generateUID();
+                const wrapper = document.createElement('div');
+                wrapper.className = 'preview-item';
+                wrapper.setAttribute('data-id', uid);
+
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.dataset.rotation = 0;
+
+                const rotateBtn = document.createElement('button');
+                rotateBtn.textContent = '↻';
+                rotateBtn.className = 'rotate-btn';
+                rotateBtn.onclick = () => {
+                    let currentRotation = parseInt(img.dataset.rotation);
+                    currentRotation = (currentRotation + 90) % 360;
+                    img.dataset.rotation = currentRotation;
+                    img.style.transform = `rotate(${currentRotation}deg)`;
+                    
+                    const imgObj = images.find(i => i.id === uid);
+                    if (imgObj) imgObj.rotation = currentRotation;
+                };
+
+                const closeBtn = document.createElement('button');
+                closeBtn.textContent = '×';
+                closeBtn.className = 'close-btn';
+                closeBtn.onclick = () => {
+                    wrapper.remove();
+                    images = images.filter(i => i.id !== uid);
+                    convertBtn.disabled = images.length === 0;
+                    if (images.length === 0) {
+                        updateStatus('');
+                        downloadBtn.style.display = 'none';
+                    }
+                };
+
+                wrapper.appendChild(img);
+                wrapper.appendChild(rotateBtn);
+                wrapper.appendChild(closeBtn);
+                previewContainer.appendChild(wrapper);
+
+                images.push({ id: uid, file, rotation: 0 });
+                convertBtn.disabled = false;
+            };
+            reader.readAsDataURL(file);
+        });
+        if (images.length > 0) {
+            updateStatus('Images loaded. Drag to reorder or click to rotate.', 'success');
+        }
+    };
+
+    Sortable.create(previewContainer, {
+        animation: 150,
+        onEnd: () => {
+            const reordered = [];
+            [...previewContainer.children].forEach(child => {
+                const id = child.getAttribute('data-id');
+                const imgObj = images.find(i => i.id === id);
+                if (imgObj) reordered.push(imgObj);
+            });
+            images = reordered;
+        }
+    });
+
+    convertBtn.addEventListener('click', async () => {
+        if (images.length === 0) {
+            updateStatus('Please upload at least one valid image.', 'error');
+            return;
+        }
+
+        convertBtn.disabled = true;
+        downloadBtn.style.display = 'none';
+        updateStatus('Processing images...', 'loading');
+
+        const formData = new FormData();
+        const orientation = document.querySelector('input[name="orientation"]:checked').value;
+
+        images.forEach((imgObj) => {
+            formData.append('image_files', imgObj.file);
+            formData.append('rotations[]', imgObj.rotation || 0);
+        });
+        formData.append('orientation', orientation);
+
+        let poll = null;
+        try {
+            const res = await fetch('/api/images-to-pdf', { method: 'POST', body: formData });
+            const data = await res.json();
+            
+            if (!res.ok) throw new Error(data.error || 'Conversion failed.');
+            
+            const jobId = data.job_id;
+            
+            poll = setInterval(async () => {
+                const check = await fetch(`/api/job/status/${jobId}`);
+                const stat = await check.json();
+
+                if (stat.status === 'finished') {
+                    clearInterval(poll);
+                    updateStatus('PDF is ready!', 'success');
+                    downloadBtn.href = `/api/job/download/${stat.result}`;
+                    downloadBtn.style.display = 'inline-flex';
+                    convertBtn.disabled = false;
+                } else if (stat.status === 'failed') {
+                    clearInterval(poll);
+                    throw new Error('Conversion failed: ' + (stat.result || 'An unknown error occurred.'));
+                }
+            }, 1500);
+
+        } catch (error) {
+            if (poll) clearInterval(poll);
+            updateStatus(error.message, 'error');
+            convertBtn.disabled = false;
+            convertBtn.style.display = 'inline-flex';
+        }
+    });
+</script>
+{% endblock %}
+
+                

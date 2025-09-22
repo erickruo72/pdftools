@@ -1,0 +1,310 @@
+{% extends 'base.html' %}
+
+{% block title %}Remove Pages from PDF - TapToPDF{% endblock %}
+
+{% block head %}
+<meta name="description" content="Remove unwanted pages from your PDF document easily and for free. Our online tool lets you select the pages you want to delete and get a new file with just the pages you need.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<link rel="canonical" href="https://www.taptopdf.com/remove-pages">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/base_style1.css') }}">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/remove_pages.css') }}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TapToPDF">
+<meta property="og:title" content="Remove Pages from PDF - TapToPDF">
+<meta property="og:description" content="Remove unwanted pages from your PDF document easily and for free. Our online tool lets you select the pages you want to delete and get a new file with just the pages you need.">
+<meta property="og:image" content="/static/css/preview.png">
+<meta property="og:image:alt" content="Remove Pages from PDF - TapToPDF">
+<meta property="og:url" content="{{ request.url }}">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Remove Pages from PDF - TapToPDF">
+<meta name="twitter:description" content="Remove unwanted pages from your PDF document easily and for free. Our online tool lets you select the pages you want to delete and get a new file with just the pages you need.">
+<meta name="twitter:image" content="/static/css/preview.png">
+<meta name="twitter:image:alt" content="Remove Pages from PDF - TapToPDF">
+
+<meta itemprop="name" content="Remove Pages from PDF - TapToPDF">
+<meta itemprop="description" content="Remove unwanted pages from your PDF document easily and for free. Our online tool lets you select the pages you want to delete and get a new file with just the pages you need.">
+<meta itemprop="image" content="/static/css/preview.png">
+<style>
+  .progress-container {
+    width: 100%;
+    background: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 10px;
+    height: 20px;
+    display: none;
+  }
+  .progress-bar {
+    width: 0%;
+    height: 100%;
+    background: #007bff;
+    transition: width 0.3s ease;
+  }
+  .status-text {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .after-download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    border-radius: 12px;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+  .after-download-btn:hover {
+    background: #e9ecef;
+    border-color: #ced4da;
+  }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="extract-body">
+  <div class="extract-container">
+    <div class="tool-header">
+      <h1><i class="fas fa-trash-alt"></i> Remove Pages from PDF</h1>
+      <p>Delete unwanted pages from your PDF document.</p>
+    </div>
+
+    <div class="upload-section" id="uploadSection">
+      <div class="drop-content">
+        <i class="bi bi-folder-plus"></i>
+        <p>Drag & Drop your PDF here</p>
+        <span>or click to browse</span>
+      </div>
+      <input type="file" id="pdfFile" accept="application/pdf" hidden />
+    </div>
+
+    <div id="fileStatusArea" class="file-item" style="display:none;">
+      <div class="file-details">
+        <i class="bi bi-file-earmark-pdf-fill folder-icon"></i>
+        <span id="pdfFileName"></span>
+        <span id="pdfFileSize"></span>
+      </div>
+      <div id="statusMessageContainer" class="status-message-container"></div>
+      <div id="progressContainer" class="progress-container">
+        <div id="progressBar" class="progress-bar"></div>
+      </div>
+    </div>
+
+    <div id="previewContainer" class="preview-container" style="display:none;"></div>
+
+    <div class="action-buttons">
+      <button id="submitBtn" class="btn btn-convert" disabled style="display:none;">
+        <span class="btn-text">Remove Selected Pages</span>
+        <i class="fas fa-arrow-right"></i>
+      </button>
+      <a id="downloadBtn" class="btn btn-download" href="#" download style="display:none;">
+        <i class="fas fa-download"></i>
+        <span>Download New PDF</span>
+      </a>
+    </div>
+
+<div id="post-download-section" class="d-none mt-5">
+  <h2 class="h3 fw-bold text-dark mb-4 text-center">What's Next?</h2>
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-8">
+      <div class="text-center">
+        <div class="mb-3">
+          <i class="bi bi-tools text-primary" style="font-size: 2.5rem;"></i>
+        </div>
+        <h3 class="h5 fw-semibold">Try Other Tools</h3>
+        <p class="small text-secondary mb-4">
+          Explore our most popular tools to organize and optimize your PDF files.
+        </p>
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+          <a href="/split-pdf" class="after-download-btn">
+            <i class="bi bi-scissors"></i> Split
+          </a>
+          <a href="/compress-pdf" class="after-download-btn">
+            <i class="bi bi-arrow-down-circle"></i> Compress
+          </a>
+          <a href="/pdf-to-jpg" class="after-download-btn">
+            <i class="bi bi-file-image"></i> PDF → JPG
+          </a>
+          <a href="/protect-pdf" class="after-download-btn">
+            <i class="bi bi-shield-lock"></i> Protect
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </div>
+</div>
+
+
+
+
+
+<section id="how-to-use" class="py-5">
+    <div class="container">
+        <h2 class="text-center fw-bold mb-4">How to Use the Remove Pages Tool </h2>
+        <div class="row g-4 justify-content-center">
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="d-flex flex-column align-items-center text-center p-3">
+                    <div class="icon-circle mb-3">
+                        <i class="bi bi-file-earmark-pdf-fill text-primary" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h5 class="fw-bold">1. Upload Your PDF</h5>
+                    <p class="text-muted">Drag and drop your PDF file or click to browse your device.</p>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="d-flex flex-column align-items-center text-center p-3">
+                    <div class="icon-circle mb-3">
+                        <i class="bi bi-cursor-fill text-primary" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h5 class="fw-bold">2. Select Pages to Remove</h5>
+                    <p class="text-muted">Click on the page previews you want to delete from the file.</p>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="d-flex flex-column align-items-center text-center p-3">
+                    <div class="icon-circle mb-3">
+                        <i class="bi bi-trash-fill text-primary" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h5 class="fw-bold">3. Start the Removal</h5>
+                    <p class="text-muted">Hit the "Remove Selected Pages" button to process your request.</p>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="d-flex flex-column align-items-center text-center p-3">
+                    <div class="icon-circle mb-3">
+                        <i class="bi bi-download text-primary" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h5 class="fw-bold">4. Download New PDF</h5>
+                    <p class="text-muted">Your new, customized PDF will be ready for download in seconds.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="why-choose" class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center fw-bold mb-4">Why Choose Our Free PDF Splitter? </h2>
+        <p class="text-center text-muted mb-5">
+            At TapToPDF, we've designed our tools to be the best choice for managing your PDF files. Here's what sets our free PDF splitter apart:
+        </p>
+        <div class="row g-4 justify-content-center">
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="d-flex align-items-start">
+                    <i class="bi bi-check-circle-fill text-success fs-4 me-3 mt-1"></i>
+                    <div>
+                        <h5 class="fw-semibold">Completely Free & Accessible</h5>
+                        <p class="text-muted small mb-0">Our tool is 100% free to use. You don't need to sign up, create an account, or download any software.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="d-flex align-items-start">
+                    <i class="bi bi-shield-fill-check text-success fs-4 me-3 mt-1"></i>
+                    <div>
+                        <h5 class="fw-semibold">Secure & Private</h5>
+                        <p class="text-muted small mb-0">Your privacy is our priority. All uploaded files are automatically deleted from our servers within a few hours.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="d-flex align-items-start">
+                    <i class="bi bi-mouse-fill text-success fs-4 me-3 mt-1"></i>
+                    <div>
+                        <h5 class="fw-semibold">User-Friendly Interface</h5>
+                        <p class="text-muted small mb-0">Our intuitive drag-and-drop feature and clear page previews make splitting a PDF a seamless experience, even for beginners.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="d-flex align-items-start">
+                    <i class="bi bi-lightning-charge-fill text-success fs-4 me-3 mt-1"></i>
+                    <div>
+                        <h5 class="fw-semibold">Fast & Efficient</h5>
+                        <p class="text-muted small mb-0">We use powerful servers to ensure quick processing speeds, so you can get your new PDF files in seconds.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="d-flex align-items-start">
+                    <i class="bi bi-file-earmark-check-fill text-success fs-4 me-3 mt-1"></i>
+                    <div>
+                        <h5 class="fw-semibold">No Watermarks</h5>
+                        <p class="text-muted small mb-0">We never add watermarks to your documents. The output file is clean and ready for immediate use.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="d-flex align-items-start">
+                    <i class="bi bi-laptop-fill text-success fs-4 me-3 mt-1"></i>
+                    <div>
+                        <h5 class="fw-semibold">Cross-Platform Compatibility</h5>
+                        <p class="text-muted small mb-0">Our tool works directly in your web browser, so you can use it on any operating system, including Windows, Mac, and Linux.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section id="faqs" class="py-5">
+    <div class="container">
+        <h2 class="text-center fw-bold mb-4">FAQs (Frequently Asked Questions)</h2>
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+
+                <div class="mb-4">
+                    <h5 class="fw-semibold">Q1: What is the "Remove Pages" tool used for?</h5>
+                    <p class="text-muted">The "Remove Pages" tool allows you to easily delete specific pages from a PDF document. It creates a new PDF containing only the pages you want to keep.</p>
+                </div>
+                <hr class="my-4">
+
+                <div class="mb-4">
+                    <h5 class="fw-semibold">Q2: Is this tool free to use?</h5>
+                    <p class="text-muted">Yes, our remove pages tool is completely free. There are no hidden fees, subscriptions, or limits on usage.</p>
+                </div>
+                <hr class="my-4">
+
+                <div class="mb-4">
+                    <h5 class="fw-semibold">Q3: Is my PDF file safe?</h5>
+                    <p class="text-muted">Absolutely. We prioritize your privacy and security. Files are processed on a secure server and are automatically deleted after a short period. We do not store or share your documents.</p>
+                </div>
+                <hr class="my-4">
+
+                <div class="mb-4">
+                    <h5 class="fw-semibold">Q4: Do I need to install any software?</h5>
+                    <p class="text-muted">No, our tool is entirely browser-based. You can access it from any web browser on any device with an internet connection.</p>
+                </div>
+                <hr class="my-4">
+
+                <div class="mb-4">
+                    <h5 class="fw-semibold">Q5: Are there any file size or page limitations?</h5>
+                    <p class="text-muted">While our tool is designed to handle large files, there may be a maximum file size limit (e.g., 200MB) to ensure optimal performance. We aim to support documents with a large number of pages.</p>
+                </div>
+                <hr class="my-4">
+
+                <div class="mb-4">
+                    <h5 class="fw-semibold">Q6: Can I remove pages from a password-protected PDF?</h5>
+                    <p class="text-muted">You will need to unlock the PDF first before you can remove pages. You can use our <a href="/unlock-pdf" class="text-primary fw-semibold text-decoration-none">PDF Unlocker tool</a> for this purpose.</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+<script src="static/js/remove_page.js"></script>
+
+{% endblock %}

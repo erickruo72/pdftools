@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+
+{% block title %}Split PDF Files - TapToPDF{% endblock %}
+
+{% block head %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Split your PDF file into individual pages or specific page ranges with our free online tool. It's fast, easy, and no registration is required.">
+    
+    <link rel="canonical" href="https://www.taptopdf.com/split-pdf">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/split.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base_style1.css') }}">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
+    </script>
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TapToPDF">
+<meta property="og:title" content="Split PDF Files - TapToPDF">
+<meta property="og:description" content="Split your PDF file into individual pages or specific page ranges with our free online tool. It's fast, easy, and no registration is required.">
+<meta property="og:image" content="/static/css/preview.png">
+<meta property="og:image:alt" content="Split PDF Files Online - TapToPDF">
+<meta property="og:url" content="{{ request.url }}">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Split PDF Files - TapToPDF">
+<meta name="twitter:description" content="Split your PDF file into individual pages or specific page ranges with our free online tool. It's fast, easy, and no registration is required.">
+<meta name="twitter:image" content="/static/css/preview.png">
+<meta name="twitter:image:alt" content="Split PDF Files Online - TapToPDF">
+
+<meta itemprop="name" content="Split PDF Files - TapToPDF">
+<meta itemprop="description" content="Split your PDF file into individual pages or specific page ranges with our free online tool. It's fast, easy, and no registration is required.">
+<meta itemprop="image" content="/static/css/preview.png">
+
+{% endblock %}
+
+{% block content %}
+<div class="pdfword-body">
+    <div class="merge-container">
+        <div class="tool-header">
+            <h1><i class="fas fa-cut"></i> Split PDF File</h1>
+            <p>Upload a PDF and split it into individual pages or a custom range.</p>
+        </div>
+
+        <div id="upload-section" class="upload-section">
+            <input type="file" id="file-input" class="hidden" multiple accept=".pdf">
+            <div class="drop-content">
+                <i class="bi bi-folder-plus"></i>
+                <p>Click or drag your PDFs here</p>
+                <span>It's fast, easy, and free.</span>
+            </div>
+        </div>
+
+        <div id="file-preview" class="file-item hidden">
+            <div class="file-details">
+                <i class="bi bi-file-earmark-pdf-fill folder-icon"></i>
+                <div>
+                    <span id="file-name"></span>
+                    <span id="file-size" class="text-xs"></span>
+                </div>
+            </div>
+            <div id="file-upload-status" class="hidden">
+                <div class="spinner"></div>
+                <div class="file-upload-progress">
+                    <div id="file-upload-progress-bar" class="file-upload-progress-bar"></div>
+                </div>
+                <span id="file-upload-percentage" class="text-xs text-gray-600">0%</span>
+            </div>
+            <button id="remove-file" class="btn hidden">
+                <i class="fas fa-times"></i> Remove
+            </button>
+        </div>
+
+        <div id="split-options" class="split-options-container hidden">
+            <label for="split-option">Split Option</label>
+            <select id="split-option">
+                <option value="" disabled selected>Select split type</option>
+                <option value="all">Split into all pages</option>
+                <option value="range">Split by page range</option>
+            </select>
+            <div id="range-inputs" class="range-inputs hidden">
+                <input type="number" id="start-page" placeholder="Start page" min="1" />
+                <input type="number" id="end-page" placeholder="End page" min="1" />
+            </div>
+        </div>
+
+        <div id="job-status-section" class="file-item hidden">
+            <div class="status-message-container">
+                <div class="spinner"></div>
+                <span id="status-message" class="status-text"></span>
+            </div>
+            <div id="processing-progress-container" class="hidden">
+                <div id="processing-progress-bar"></div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button id="split-button" class="btn btn-convert hidden">
+                Split PDF
+            </button>
+            <a id="download-link" href="#" class="btn btn-download hidden" target="_blank" rel="noopener noreferrer">
+                <i class="fas fa-download"></i> Download File
+            </a>
+        </div>
+
+        <div id="message-container" class="status-message hidden"></div>
+    </div>
+</div>
+
+<div class="container my-5 p-5">
+    <h2 class="h3 fw-bold text-center mb-5 text-dark">How to Split PDF Files Online for Free</h2>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
+        <div class="col d-flex flex-column align-items-center text-center p-3">
+            <div class="mb-4">
+                <i class="fas fa-upload icon-size-2xl text-primary"></i>
+            </div>
+            <h3 class="fw-semibold h5 mb-2 text-dark">Step 1: Upload Your PDF</h3>
+            <p class="text-muted small">Drag and drop your file or click the "Select Files" button. Our tool works with all PDF documents, big or small.</p>
+        </div>
+        <div class="col d-flex flex-column align-items-center text-center p-3">
+            <div class="mb-4">
+                <i class="fas fa-cut icon-size-2xl text-primary"></i>
+            </div>
+            <h3 class="fw-semibold h5 mb-2 text-dark">Step 2: Choose Your Split Option</h3>
+            <p class="text-muted small">Choose to split your PDF into individual pages or specify a custom page range to extract a section.</p>
+        </div>
+        <div class="col d-flex flex-column align-items-center text-center p-3">
+            <div class="mb-4">
+                <i class="fas fa-cogs icon-size-2xl text-primary"></i>
+            </div>
+            <h3 class="fw-semibold h5 mb-2 text-dark">Step 3: Click 'Split'</h3>
+            <p class="text-muted small">With a single click, our powerful servers will seamlessly split your file. The process is quick and efficient.</p>
+        </div>
+        <div class="col d-flex flex-column align-items-center text-center p-3">
+            <div class="mb-4">
+                <i class="fas fa-download icon-size-2xl text-primary"></i>
+            </div>
+            <h3 class="fw-semibold h5 mb-2 text-dark">Step 4: Download Your File</h3>
+            <p class="text-muted small">Your new, split PDF will be ready for instant download. You can also <a href="{{ url_for('main.merge_pdf_page') }}" class="text-decoration-none text-primary fw-medium">merge</a> or <a href="{{ url_for('main.compress_pdf_page') }}" class="text-decoration-none text-primary fw-medium">compress</a> files with our other free tools.</p>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5 p-5">
+    <h2 class="h3 fw-bold text-center mb-5 text-dark">Why Choose Our Free PDF Splitter?</h2>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+        <div class="col d-flex flex-column align-items-center text-center p-3">
+            <i class="fas fa-check-circle text-success icon-size-4xl mb-4"></i>
+            <h3 class="fw-bold h5 mb-2 text-dark">Completely Free & Online</h3>
+            <p class="text-muted small">Our tool is entirely free to use, with no hidden fees or watermarks. Split PDFs online without ever needing to download or install software.</p>
+        </div>
+        <div class="col d-flex flex-column align-items-center text-center p-3">
+            <i class="fas fa-lock text-success icon-size-4xl mb-4"></i>
+            <h3 class="fw-bold h5 mb-2 text-dark">Guaranteed Security</h3>
+            <p class="text-muted small">Your privacy is a top priority. All files are encrypted during the process and permanently deleted from our servers after one hour. Your documents are safe with us.</p>
+        </div>
+        <div class="col d-flex flex-column align-items-center text-center p-3">
+            <i class="fas fa-tachometer-alt text-success icon-size-4xl mb-4"></i>
+            <h3 class="fw-bold h5 mb-2 text-dark">Lightning-Fast Processing</h3>
+            <p class="text-muted small">Don't wait for slow uploads and splitting. Our powerful servers are designed for speed, ensuring you can quickly get your new PDFs.</p>
+        </div>
+        <div class="col d-flex flex-column align-items-center text-center p-3">
+            <div class="mb-4">
+                <i class="bi bi-laptop icon-size-4xl text-success"></i>
+            </div>
+            <h3 class="fw-bold h5 mb-2 text-dark">Works on All Devices</h3>
+            <p class="text-muted small">Access our tool from anywhere. Our tool works seamlessly on any operating system or browser, providing a consistent experience.</p>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+<div class="container my-5 p-5">
+    <h2 class="h3 fw-bold text-center mb-5 text-dark">Frequently Asked Questions</h2>
+    <div class="faq-accordion-flat">
+        <div class="faq-item-flat">
+            <h3 class="fw-semibold h5 mb-2 text-dark">How do I split a PDF file?</h3>
+            <p class="text-muted small">Simply upload your PDF, choose to split all pages or a custom range, and click the split button. Your new files will be ready to download.</p>
+        </div>
+        <div class="faq-item-flat">
+            <h3 class="fw-semibold h5 mb-2 text-dark">Is it possible to extract a single page?</h3>
+            <p class="text-muted small">Yes! Just select a custom page range and enter a single page number (e.g., from page 10 to 10). The tool will create a new PDF containing only that page.</p>
+        </div>
+        <div class="faq-item-flat">
+            <h3 class="fw-semibold h5 mb-2 text-dark">Can I split a password-protected PDF?</h3>
+            <p class="text-muted small">Yes, but you will need to enter the correct password to unlock and split the document.</p>
+        </div>
+        <div class="faq-item-flat">
+            <h3 class="fw-semibold h5 mb-2 text-dark">Is it free to use your PDF splitter?</h3>
+            <p class="text-muted small">Yes, our tool is completely free to use. There are no hidden fees or limitations on the number of files you can split.</p>
+        </div>
+        <div class="faq-item-flat">
+            <h3 class="fw-semibold h5 mb-2 text-dark">How can I reduce the file size of my new PDF?</h3>
+            <p class="text-muted small">After splitting your document, you can reduce the file size without losing quality by using our <a href="{{ url_for('main.compress_pdf_page') }}" class="text-decoration-none text-primary fw-medium">Compress PDF tool</a>.</p>
+        </div>
+        <div class="faq-item-flat">
+            <h3 class="fw-semibold h5 mb-2 text-dark">Are my files safe?</h3>
+            <p class="text-muted small">Yes, we use a secure connection for all file transfers. Your files are automatically and permanently deleted from our servers shortly after you are done. Your privacy is our top priority.</p>
+        </div>
+    </div>
+</div>
+
+<script  src="static/js/split.js"></script>
+
+
+{% endblock %}

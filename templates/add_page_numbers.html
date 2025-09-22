@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+
+{% block title %}Add Page Numbers to PDF - TapToPDF{% endblock %}
+
+{% block head %}
+<meta name="description" content="Add page numbers to your PDF documents with our free online tool. Choose the position, font, and format for the page numbers and download the new file instantly.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="canonical" href="https://www.taptopdf.com/add-page-numbers">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/page_numbers.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/base_style1.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TapToPDF">
+<meta property="og:title" content="Add Page Numbers to PDF - TapToPDF">
+<meta property="og:description" content="Add page numbers to your PDF documents with our free online tool. Choose the position, font, and format for the page numbers and download the new file instantly.">
+<meta property="og:image" content="/static/css/preview.png">
+<meta property="og:image:alt" content="Add Page Numbers to PDF - TapToPDF">
+<meta property="og:url" content="{{ request.url }}">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Add Page Numbers to PDF - TapToPDF">
+<meta name="twitter:description" content="Add page numbers to your PDF documents with our free online tool. Choose the position, font, and format for the page numbers and download the new file instantly.">
+<meta name="twitter:image" content="/static/css/preview.png">
+<meta name="twitter:image:alt" content="Add Page Numbers to PDF - TapToPDF">
+
+<meta itemprop="name" content="Add Page Numbers to PDF - TapToPDF">
+<meta itemprop="description" content="Add page numbers to your PDF documents with our free online tool. Choose the position, font, and format for the page numbers and download the new file instantly.">
+<meta itemprop="image" content="/static/css/preview.png">
+{% endblock %}
+
+{% block content %}
+<div class="page-numbers-body">
+    <div class="main-container">
+        <div class="tool-header">
+            <h1><i class="bi bi-file-earmark-spreadsheet"></i> Add Page Numbers to PDF</h1>
+            <p>Easily add page numbers to your PDF documents. Choose the position and download the updated PDF instantly.</p>
+        </div>
+
+        <div id="upload-section" class="upload-section">
+            <div class="drop-content">
+                <i class="bi bi-folder-plus upload-icon"></i>
+                <p>Drag & Drop your PDF here</p>
+                <span>or click to browse</span>
+            </div>
+            <input type="file" id="pdf_file" name="pdf_file" accept=".pdf" hidden />
+        </div>
+
+        <div id="fileStatusArea" class="file-item" style="display:none;">
+            <div class="file-details">
+                <i class="bi bi-file-earmark-pdf-fill file-icon"></i>
+                <span id="pdfFileName"></span>
+                <span id="pdfFileSize"></span>
+            </div>
+            <div id="statusMessageContainer" class="status-message-container"></div>
+            <div id="statusMsg" class="status-message"></div>
+        </div>
+
+        <div id="preview-container" class="preview-container" style="display:none;">
+            <div id="position-grid" class="position-grid">
+                <div class="position-box" data-position="top-left"></div>
+                <div class="position-box" data-position="top-center"></div>
+                <div class="position-box" data-position="top-right"></div>
+                <div class="position-box" data-position="center-left"></div>
+                <div class="position-box" data-position="center-center"></div>
+                <div class="position-box" data-position="center-right"></div>
+                <div class="position-box" data-position="bottom-left"></div>
+                <div class="position-box selected" data-position="bottom-center"></div>
+                <div class="position-box" data-position="bottom-right"></div>
+            </div>
+            <img id="preview-img" src="" alt="PDF Page Preview">
+        </div>
+        
+        <div class="action-buttons">
+            <button id="submitBtn" class="btn btn-convert" disabled style="display:none;">
+                <span class="btn-text">Add Page Numbers</span>
+                <i class="fas fa-arrow-right"></i>
+            </button>
+            <a id="downloadBtn" class="btn btn-download" href="#" download style="display:none;">
+                <i class="fas fa-download"></i>
+                <span>Download Numbered PDF</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    let selectedPosition = "bottom-center";
+    let uploadedFile = null;
+
+    const uploadSection = document.getElementById('upload-section');
+    const fileInput = document.getElementById('pdf_file');
+    const fileStatusArea = document.getElementById('fileStatusArea');
+    const pdfFileNameSpan = document.getElementById('pdfFileName');
+    const pdfFileSizeSpan = document.getElementById('pdfFileSize');
+    const statusMessageContainer = document.getElementById('statusMessageContainer');
+    const statusMsg = document.getElementById('statusMsg');
+    const previewContainer = document.getElementById('preview-container');
+    const previewImg = document.getElementById('preview-img');
+    const positionBoxes = document.querySelectorAll('.position-box');
+    const submitBtn = document.getElementById('submitBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    const formatBytes = (bytes, decimals = 2) => {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    };
+
+    const updateStatusUI = (text, type = 'spinner') => {
+        let iconHtml = '';
+        if (type === 'spinner') {
+            iconHtml = '<div class="spinner"></div>';
+        } else if (type === 'success') {
+            iconHtml = '<i class="bi bi-check-circle-fill success-icon"></i>';
+        } else if (type === 'error') {
+            iconHtml = '<i class="bi bi-x-circle-fill" style="color: #dc3545;"></i>';
+        }
+        statusMessageContainer.innerHTML = iconHtml;
+        statusMsg.textContent = text;
+    };
+
+    const handleFile = async (file) => {
+        if (!file || file.type !== "application/pdf") {
+            updateStatusUI('Please upload a valid PDF file.', 'error');
+            return;
+        }
+
+        uploadedFile = file;
+        uploadSection.style.display = 'none';
+        fileStatusArea.style.display = 'flex';
+        
+        const fileName = file.name;
+        const maxLength = 20;
+        const fileExtensionIndex = fileName.lastIndexOf('.');
+        let truncatedFileName;
+
+        if (fileName.length > maxLength && fileExtensionIndex !== -1 && fileExtensionIndex > 0) {
+            const extension = fileName.substring(fileExtensionIndex);
+            const nameWithoutExtension = fileName.substring(0, fileExtensionIndex);
+            const truncateTo = maxLength - extension.length - 3; 
+            
+            if (truncateTo > 0) {
+                truncatedFileName = nameWithoutExtension.substring(0, truncateTo) + '...' + extension;
+            } else {
+                truncatedFileName = '...' + extension;
+            }
+        } else {
+            truncatedFileName = fileName;
+        }
+
+        pdfFileNameSpan.textContent = truncatedFileName;
+        pdfFileSizeSpan.textContent = formatBytes(file.size);
+        
+        updateStatusUI('Uploading...');
+
+        const formData = new FormData();
+        formData.append('pdf_file', uploadedFile);
+
+        try {
+            const response = await fetch(`${window.location.origin}/api/preview-first-page`, {
+                method: 'POST',
+                body: formData,
+            });
+            const data = await response.json();
+            
+            if (data.preview_url) {
+                previewImg.src = data.preview_url;
+                fileStatusArea.style.display = 'none';
+                previewContainer.style.display = 'block';
+                submitBtn.style.display = 'inline-flex';
+                submitBtn.disabled = false;
+            } else {
+                updateStatusUI(data.error || 'An error occurred during preview generation.', 'error');
+            }
+        } catch (error) {
+            console.error("Error during file preview:", error);
+            updateStatusUI('An error occurred. Please try again.', 'error');
+        }
+    };
+
+    uploadSection.addEventListener('click', () => fileInput.click());
+    uploadSection.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadSection.classList.add('dragover');
+    });
+    uploadSection.addEventListener('dragleave', () => {
+        uploadSection.classList.remove('dragover');
+    });
+    uploadSection.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadSection.classList.remove('dragover');
+        handleFile(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener('change', (e) => {
+        handleFile(e.target.files[0]);
+    });
+
+    positionBoxes.forEach(box => {
+        box.addEventListener('click', () => {
+            positionBoxes.forEach(b => b.classList.remove('selected'));
+            box.classList.add('selected');
+            selectedPosition = box.dataset.position;
+        });
+    });
+
+    submitBtn.addEventListener('click', async () => {
+        if (!uploadedFile) {
+            updateStatusUI('No file has been uploaded.', 'error');
+            return;
+        }
+        
+        submitBtn.disabled = true;
+        
+        previewContainer.style.display = 'none';
+        fileStatusArea.style.display = 'flex';
+        updateStatusUI('Processing...');
+
+        const formData = new FormData();
+        formData.append('pdf_file', uploadedFile);
+        formData.append('position', selectedPosition);
+
+        try {
+            const response = await fetch(`${window.location.origin}/api/add-page-numbers`, {
+                method: 'POST',
+                body: formData,
+            });
+            const data = await response.json();
+            
+            if (data.job_id) {
+                checkJobStatus(data.job_id);
+            } else {
+                updateStatusUI(data.error || 'An error occurred during processing.', 'error');
+                submitBtn.disabled = false; 
+            }
+        } catch (error) {
+            console.error("Error during job submission:", error);
+            updateStatusUI('An error occurred. Please try again.', 'error');
+            submitBtn.disabled = false; 
+        }
+    });
+
+    const checkJobStatus = async (jobId) => {
+        const interval = setInterval(async () => {
+            try {
+                const response = await fetch(`${window.location.origin}/api/job/status/${jobId}`);
+                const data = await response.json();
+
+                if (data.status === 'finished') {
+                    clearInterval(interval);
+                    updateStatusUI('Done!', 'success');
+                    
+                    downloadBtn.href = `${window.location.origin}/api/job/download/${data.result}`;
+                    downloadBtn.style.display = 'inline-flex';
+                    submitBtn.style.display = 'none';
+
+                } else if (data.status === 'failed') {
+                    clearInterval(interval);
+                    updateStatusUI('Job failed. Please try again.', 'error');
+                    submitBtn.style.display = 'inline-flex';
+                    submitBtn.disabled = false;
+                }
+            } catch (error) {
+                clearInterval(interval);
+                console.error("Error checking job status:", error);
+                updateStatusUI('Error checking job status.', 'error');
+                submitBtn.style.display = 'inline-flex';
+                submitBtn.disabled = false;
+            }
+        }, 2000);
+    };
+</script>
+{% endblock %}

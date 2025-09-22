@@ -1,0 +1,407 @@
+.after-download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #333;
+  background-color: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease-in-out;
+}
+
+.after-download-btn:hover {
+  background-color: #eff5fc;
+  border-color: #d0e2ff;
+  color: #0d6efd;
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+}
+
+
+/* --- General Body and Container Styles --- */
+
+.file-progress-bar + span {
+    font-size: 0.8rem;
+    color: #374151; /* dark gray */
+    font-weight: 500;
+}
+.file-progress-bar {
+    width: 100%;
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 5px;
+}
+.file-progress {
+    height: 100%;
+    background: #4c1d95;
+    width: 0%;
+    transition: width 0.3s ease;
+}
+.spinner {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #4c1d95;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 5px;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+.hidden-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 120px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.pdfword-body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: #f6f3f3;
+  color: #1f2937;
+  margin: 0;
+  padding: 2rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh; /* ✅ instead of fixed height */
+}
+
+.pdfword-body .merge-container {
+  width: 100%;
+  max-width: 900px;
+  padding: 2.5rem 3rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%; 
+}
+
+/* --- Header Section --- */
+.pdfword-body .tool-header h1 {
+font-size: 2.25rem;
+font-weight: 700;
+margin-bottom: 0.5rem;
+color: #5b21b6;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 0.75rem;
+}
+
+.pdfword-body .tool-header h1 i {
+color: #5b21b6;
+font-size: 2.5rem;
+}
+
+.pdfword-body .tool-header p {
+font-size: 1.125rem;
+color: #6b7280;
+margin-bottom: 2rem;
+line-height: 1.5;
+}
+
+/* --- Upload Section --- */
+.pdfword-body .upload-section {
+border: 3px dashed #e5e7eb;
+border-radius: 1rem;
+padding: 3rem 1.5rem;
+cursor: pointer;
+transition: all 0.3s ease;
+display: flex;
+justify-content: center;
+align-items: center;
+margin-bottom: 2rem;
+}
+
+.pdfword-body .upload-section:hover,
+.pdfword-body .upload-section.highlight {
+border-color: #5b21b6;
+background-color: #c4b5fd;
+}
+
+.pdfword-body .drop-content {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 1rem;
+}
+
+.pdfword-body .drop-content .bi-folder-plus {
+font-size: 4rem;
+color: #5b21b6;
+margin-bottom: 0.5rem;
+}
+
+.pdfword-body .drop-content p {
+font-size: 1.25rem;
+font-weight: 600;
+color: #4c1d95;
+margin: 0;
+}
+
+.pdfword-body .drop-content span {
+font-size: 1rem;
+color: #6b7280;
+font-weight: 500;
+}
+
+/* --- File Items and Reordering --- */
+.pdfword-body #file-list {
+display: flex;
+flex-wrap: wrap;
+gap: 1rem;
+justify-content: center;
+margin-bottom: 2rem;
+}
+
+.pdfword-body .file-item {
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+gap: 0.5rem;
+background-color: #f3f4f6;
+border-radius: 1rem;
+padding: 1.5rem 1rem;
+border: 1px solid #e5e7eb;
+width: 140px; /* Fixed width for consistency */
+height: 160px; /* Fixed height for consistency */
+text-align: center;
+cursor: move;
+position: relative;
+transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.pdfword-body .file-item:hover {
+box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+transform: translateY(-2px);
+}
+
+.pdfword-body .file-item.dragging {
+opacity: 0.5;
+box-shadow: none;
+transform: scale(0.95);
+}
+
+.pdfword-body .file-item .file-icon {
+font-size: 3rem;
+color: #ef4444; /* Use a red tone for PDF icon */
+}
+
+.pdfword-body .file-item .remove-btn {
+position: absolute;
+top: 0.5rem;
+right: 0.5rem;
+background-color: #fca5a5;
+color: #ef4444;
+border-radius: 50%;
+width: 24px;
+height: 24px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-weight: bold;
+font-size: 0.75rem;
+cursor: pointer;
+border: none;
+opacity: 0.8;
+}
+
+.pdfword-body .file-item .remove-btn:hover {
+opacity: 1;
+}
+
+.pdfword-body .file-item span {
+font-size: 0.875rem;
+font-weight: 600;
+color: #1f2937;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+width: 100%;
+padding: 0 0.5rem;
+display: block;
+}
+
+.pdfword-body .file-item .file-pages {
+font-size: 0.75rem;
+color: #6b7280;
+font-weight: normal;
+}
+
+/* --- Job Status Section --- */
+.pdfword-body .job-status-section {
+background-color: #eef2ff;
+border-left: 4px solid #4f46e5;
+color: #4338ca;
+padding: 1.5rem;
+border-radius: 0.75rem;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 1rem;
+margin-bottom: 2rem;
+}
+
+.pdfword-body .job-status-section .spinner {
+border: 4px solid #e0e7ff;
+border-top: 4px solid #4f46e5;
+border-radius: 50%;
+width: 32px;
+height: 32px;
+animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
+}
+
+/* --- Action Buttons --- */
+.pdfword-body .action-buttons {
+display: flex;
+justify-content: center;
+gap: 1.5rem;
+margin-top: 2rem;
+}
+
+.pdfword-body .btn {
+padding: 1rem 2rem;
+border-radius: 9999px;
+font-size: 1.125rem;
+font-weight: 600;
+cursor: pointer;
+transition: transform 0.2s, box-shadow 0.2s;
+display: inline-flex;
+align-items: center;
+gap: 0.75rem;
+text-decoration: none;
+justify-content: center;
+background-color: #10b981;}
+
+.pdfword-body .btn:hover {
+transform: translateY(-2px);
+box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.05);
+}
+
+.pdfword-body .btn-convert {
+background-color: #5b21b6;
+color: #ffffff;
+}
+
+.pdfword-body .btn-download {
+background-color: #10b981;
+color: #ffffff;
+}
+
+/* --- Utility Class --- */
+.hidden {
+display: none !important;
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 768px) {
+.pdfword-body .merge-container {
+    padding: 2rem 1.5rem;
+}
+
+.pdfword-body .tool-header h1 {
+    font-size: 1.75rem;
+}
+
+.pdfword-body .tool-header p {
+    font-size: 1rem;
+}
+
+.pdfword-body .btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+}
+
+.pdfword-body #file-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+}
+
+
+/* Error message */
+.error-message {
+  background-color: #ffffff;    /* white background */
+  color: #1f2937;               /* dark gray text */
+  border: 1px solid #e5e7eb;
+}
+
+/* Success message */
+.success-message {
+  background-color: #ecfdf5;    /* light green background */
+  color: #065f46;               /* dark green text */
+  border: 1px solid #6ee7b7;
+}
+
+
+
+/* Style for the new More Tools section */
+.more-tools {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+    text-align: center;
+}
+.more-tools h2 {
+    font-size: 1.5rem;
+    color: #1a202c;
+    margin-bottom: 15px;
+}
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+.tool-item {
+    background-color: #f7fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 20px;
+    text-decoration: none;
+    color: #4a5568;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.tool-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.tool-item i {
+    font-size: 2.5rem;
+    color: #4c1d95;
+    margin-bottom: 10px;
+}
+.tool-item span {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+@media (min-width: 640px) {
+    .tools-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+
+

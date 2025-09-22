@@ -1,0 +1,398 @@
+/*
+ * This is the corrected and complete base stylesheet,
+ * rewritten to match the TapToPDF color palette
+ * with unique class names to prevent style conflicts.
+ */
+
+:root {
+    --primary-purple: #4c1d95; /* Header and footer background */
+    --secondary-purple: #6d28d9; /* Active links and heading accents */
+    --light-purple: #e6e9f4; /* Subtle hover effects and accents */
+    --text-gray: #6b7280; /* Standard text color */
+    --white: #ffffff; /* White text on dark backgrounds */
+    --black: #1f2937; /* Dark text on light backgrounds */
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    color: var(--black);
+    background-color: var(--white);
+    /* Add padding to prevent content from being hidden by the fixed header */
+    padding-top: 60px;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/*
+ * Header and Navigation
+ * -----------------------------------------------------------------------------
+ */
+.tpdf-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    /* Add a white background for better text visibility */
+    background-color: var(--white);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tpdf-navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+}
+
+.tpdf-logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-left: 40px;
+    /* Change logo color to be visible on the white header */
+    color: var(--primary-purple);
+}
+
+.tpdf-nav-links {
+    list-style: none;
+    margin: 0 auto;
+    padding: 0;
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.tpdf-nav-links > li > a {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+    /* Change text color to be visible on the white header */
+    color: var(--black);
+}
+
+/* Active Link */
+.tpdf-nav-links > li > a.active {
+    color: var(--secondary-purple);
+}
+
+.tpdf-nav-links > li > a.active i {
+    color: var(--secondary-purple);
+}
+
+/* Hover state */
+.tpdf-nav-links > li > a:hover {
+    color: var(--secondary-purple);
+}
+
+.tpdf-nav-links > li > a:hover i {
+    color: var(--secondary-purple);
+}
+
+/*
+ * Dropdown Menu
+ * -----------------------------------------------------------------------------
+ */
+.tpdf-tools-dropdown {
+    position: relative;
+}
+
+.tpdf-tools-dropdown > a {
+    cursor: pointer;
+}
+
+.tpdf-dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-70%);
+    background-color: var(--white);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    min-width: 600px;
+    max-width: 1200px;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1.5rem;
+    transition: all 0.3s ease;
+    visibility: hidden;
+    z-index: 1000;
+    opacity: 0;
+}
+
+.tpdf-tools-dropdown:hover .tpdf-dropdown-menu {
+    display: grid;
+    visibility: visible;
+    opacity: 1;
+}
+
+.tpdf-dropdown-section {
+    display: flex;
+    flex-direction: column;
+    color: var(--black);
+}
+
+.tpdf-dropdown-section h4 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--secondary-purple);
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+}
+
+.tpdf-dropdown-section a {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+    color: var(--black);
+    border-radius: 0.25rem;
+    transition: background-color 0.2s ease;
+}
+
+.tpdf-dropdown-section a:hover {
+    background-color: var(--light-purple);
+    color: var(--secondary-purple);
+}
+
+/* Mobile Menu and Media Queries
+ * -----------------------------------------------------------------------------
+ */
+@media (max-width: 768px) {
+    body {
+        padding-top: 60px;
+    }
+}
+
+.tpdf-hamburger {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    z-index: 1001;
+}
+
+.tpdf-hamburger-icon {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 25px;
+    height: 20px;
+}
+
+.tpdf-hamburger-icon .tpdf-line {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: var(--black);
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.tpdf-mobile-dropdown-content a {
+    display: block;
+    color: var(--white);
+    text-decoration: none;
+    padding: 1.75rem 0;
+    font-weight: 500;
+    transition: color 0.3s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tpdf-mobile-dropdown-content .tpdf-dropdown-section:last-child a:last-child {
+    border-bottom: none;
+}
+
+.tpdf-mobile-dropdown-content a:hover,
+.tpdf-mobile-dropdown-content a.active {
+    color: var(--light-purple);
+}
+
+/* Styling for when the menu is active */
+.tpdf-mobile-menu.active .tpdf-hamburger-icon .tpdf-line:nth-child(2) {
+    opacity: 0;
+}
+
+.tpdf-mobile-menu.active .tpdf-hamburger-icon .tpdf-line:nth-child(1) {
+    transform: translateY(9px) rotate(45deg);
+}
+
+.tpdf-mobile-menu.active .tpdf-hamburger-icon .tpdf-line:nth-child(3) {
+    transform: translateY(-9px) rotate(-45deg);
+}
+
+.tpdf-mobile-menu {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 100%;
+    max-width: 400px;
+    height: 100vh;
+    background-color: var(--primary-purple);
+    color: var(--white);
+    padding: 2rem 2rem;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease-in-out;
+    z-index: 1001;
+    overflow-y: auto;
+}
+
+.tpdf-mobile-menu.active {
+    right: 0;
+}
+
+.tpdf-mobile-menu .tpdf-close-btn {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--white);
+}
+
+.tpdf-mobile-menu .tpdf-mobile-nav-links {
+    list-style: none;
+    padding: 0;
+    margin-top: 2rem;
+}
+
+.tpdf-mobile-menu .tpdf-mobile-nav-links li {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tpdf-mobile-menu .tpdf-mobile-nav-links li:last-child {
+    border-bottom: none;
+}
+
+.tpdf-mobile-menu .tpdf-mobile-nav-links a {
+    display: block;
+    padding: 1rem 0;
+    text-decoration: none;
+    color: var(--white);
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.tpdf-mobile-menu .tpdf-mobile-nav-links a:hover {
+    color: var(--text-gray);
+    text-decoration: none;
+    background:#4c1d95;
+}
+
+.tpdf-mobile-dropdown-toggle a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tpdf-mobile-dropdown-content {
+    display: none;
+    border-bottom: 1px solid rgba(141, 31, 31, 0.1);
+    padding-left: 1rem;
+}
+
+.tpdf-mobile-dropdown-content.active {
+    display: block;
+}
+
+.tpdf-mobile-dropdown-content .tpdf-dropdown-section {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tpdf-mobile-dropdown-content .tpdf-dropdown-section:last-child {
+    border-bottom: none;
+}
+
+.tpdf-mobile-dropdown-content .tpdf-dropdown-section h4 {
+    font-size: 0.9rem;
+    color: var(--light-purple);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.tpdf-mobile-dropdown-content .tpdf-dropdown-section a {
+    padding: 0.8rem 0;
+    font-weight: 400;
+}
+
+/* Hide desktop nav on small screens, show hamburger */
+@media (max-width: 992px) {
+    .tpdf-nav-links {
+        display: none;
+    }
+
+    .tpdf-hamburger {
+        display: block;
+    }
+    .tpdf-logo {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-left: 10px;
+    color: var(--primary-purple);
+  }
+}
+
+/* Hide hamburger and mobile menu on large screens */
+@media (min-width: 993px) {
+    .tpdf-hamburger,
+    .tpdf-mobile-menu {
+        display: none;
+    }
+}
+
+.tpdf-footer {
+    background-color: var(--primary-purple);
+    color: var(--white);
+    padding: 2rem 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.tpdf-footer p {
+    margin: 0;
+    line-height: 1.6;
+}
+
+.tpdf-footer a {
+    color: var(--light-purple);
+    text-decoration: none;
+    margin: 0 0.3rem;
+    transition: color 0.3s ease;
+}
+
+.tpdf-footer a:hover {
+    color: var(--white);
+}
+
+@media (max-width: 600px) {
+    .tpdf-footer p {
+        font-size: 0.8rem;
+        line-height: 1.4;
+    }
+
+    .tpdf-footer a {
+        display: block;
+        margin: 0.2rem 0;
+    }
+}

@@ -1,0 +1,327 @@
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: #f3f4f6;
+    color: #1f2937;
+    margin: 0;
+    height: 100vh;
+    padding: 0;
+}
+
+.hero-section {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+.protect-page-container {
+    width: 100%;
+    max-width: 900px;
+    padding: 2.5rem 3rem;
+    text-align: center;
+    background-color: #ffffff;
+   
+}
+.protect-page-container h1 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #5b21b6;
+}
+.protect-page-container p {
+    font-size: 1.125rem;
+    color: #6b7280;
+    margin-bottom: 2rem;
+}
+#protect-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+
+.hero-section .bi-folder-plus{
+      font-size: 4rem;
+  color: #5b21b6;
+  margin-bottom: 0.5rem;
+}
+.form-group {
+    width: 100%;
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #4b5563;
+}
+/* Drag and Drop Zone */
+#drop-zone {
+    border: 3px dashed #5b21b6;
+    border-radius: 1rem;
+    padding: 4rem; /* Adjusted for fixed width */
+    width: 600px; /* Set fixed width */
+    max-width: 100%; /* Ensure responsiveness */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    color: #6b7280;
+    font-weight: 500;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+#drop-zone:hover {
+    background-color: #f3f4fe;
+}
+#drop-zone.dragover {
+    background-color: #f3f4fe;
+}
+#drop-zone.file-dropped {
+    border-style: solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1rem 2rem;
+    background-color: #f9fafb;
+    color: #1f2937;
+}
+.file-icon {
+    font-size: 2rem;
+}
+.file-name {
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 80%;
+}
+/* Password Input with Toggle */
+.password-input-container {
+    position: relative;
+    width: 100%;
+}
+.password-input-container input {
+    width: 100%;
+    padding: 0.75rem 3rem 0.75rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #d1d5db;
+    font-size: 1rem;
+    color: #1f2937;
+    box-sizing: border-box;
+}
+.password-input-container input:focus {
+    outline: none;
+    border-color: #5b21b6;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+.password-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    width: 1.2rem;
+    height: 1.2rem;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.password-toggle svg {
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+#protect-form button[type="submit"] {
+    padding: 1rem 2rem;
+    border-radius: 9999px;
+    font-size: 1.125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    background-color: #5b21b6;
+    color: #ffffff;
+    width: 100%;
+    margin-top: 1rem;
+}
+#protect-form button[type="submit"]:hover {
+    background-color: #4c1d95;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+#protect-form button[type="submit"]:disabled {
+    background-color: #e5e7eb;
+    cursor: not-allowed;
+    color: #6b7280;
+}
+/* Spinner */
+.spinner {
+    display: none;
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-top: 4px solid #5b21b6;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+/* Status Messages (Alerts) */
+.alert {
+    display: none;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    margin-top: 1.5rem;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+}
+.alert.show {
+    display: block;
+}
+.alert.success {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+.alert.warning {
+    background-color: #fffbe6;
+    color: #92400e;
+}
+.alert.error {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+/* Progress Bar */
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background-color: #e5e7eb;
+    border-radius: 9999px;
+    margin-top: 2rem;
+    overflow: hidden;
+    display: none;
+}
+.progress-bar-fill {
+    height: 100%;
+    background-color: #5b21b6;
+    border-radius: 9999px;
+    transition: width 0.3s ease;
+    width: 0;
+}
+/* Download Button */
+.download-button {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 10px auto;
+    background-color: #5b21b6;
+    color: white;
+    text-decoration: none;
+    border-radius: 9999px;
+    font-weight: 600;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: all 0.2s ease;
+}
+.download-button:hover {
+    background-color: #4c1d95;
+    transform: translateY(-2px);
+}
+/* How-To Section */
+.how-to-section {
+    margin-top: 3rem;
+    text-align: center;
+    padding: 2rem;
+}
+.how-to-section h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    color: #374151;
+}
+.how-to-cards-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5rem;
+}
+.step-card {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    padding: 2rem;
+    flex: 1;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e5e7eb;
+}
+.step-number {
+    width: 40px;
+    height: 40px;
+    background-color: #5b21b6;
+    color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    margin: 0 auto 1rem;
+}
+.step-card h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #4b5563;
+}
+.step-card p {
+    font-size: 1rem;
+    color: #6b7280;
+    margin: 0;
+}
+/* Discover More Tools Section */
+.discover-section {
+    margin-top: 3rem;
+    text-align: center;
+    padding: 2rem;
+}
+.discover-section h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: #374151;
+}
+.tools-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+}
+.tool-link {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border-radius: 9999px;
+    background-color: #e0e7ff;
+    color: #4338ca;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+.tool-link:hover {
+    background-color: #c7d2fe;
+    transform: translateY(-2px);
+}
+@media (max-width: 768px) {
+    .hero-section { padding: 1rem; }
+    .protect-page-container { padding: 2rem 1.5rem; }
+    .how-to-cards-container { flex-direction: column; }
+    .step-card { padding: 1.5rem; }
+    #drop-zone { width: auto; } /* Adjust for smaller screens */
+}
